@@ -23,9 +23,9 @@ grass = Material(diffuse=(0.4,1,0.4), spec= 32, ks=0.1)
 water = Material(diffuse=(0.4,0.4,1), spec= 256, ks=0.2)
 button = Material(diffuse=(0,0,0),spec=32,ks=0.1)
 carrot = Material(diffuse=(0.93,0.57,0.13), spec = 5, ks = 0.02)
-stone = Material(diffuse=(0.60,0.60,0.60), spec = 5, ks = 0.02)
-sclera = Material(diffuse=(0.86,0.88,0.85), spec = 5, ks = 0.02)
-coal = Material(diffuse=(0.15,0.15,0.15), spec = 5, ks = 0.02)
+smile = Material(diffuse=(0.60,0.60,0.60), spec = 5, ks = 0.02)
+eyes = Material(diffuse=(0.86,0.88,0.85), spec = 5, ks = 0.02)
+ojo = Material(diffuse=(0.15,0.15,0.15), spec = 5, ks = 0.02)
 
 
 
@@ -46,16 +46,16 @@ raytracer.scene.append(Sphere(position=(0,0.2,-2),radius=0.1,material=button))
 raytracer.scene.append(Sphere(position=(0,1,-4), radius = 0.1, material = carrot))
 
 #Boca
-raytracer.scene.append(Sphere(position=(-0.35,1.54,-4.15), radius = 0.075, material = stone))
-raytracer.scene.append(Sphere(position=(-0.13,1.49,-4.15), radius = 0.075, material = stone))
-raytracer.scene.append(Sphere(position=(0.12,1.51,-4.15), radius = 0.075, material = stone))
-raytracer.scene.append(Sphere(position=(0.35,1.55,-4.15), radius = 0.075, material = stone))
+raytracer.scene.append(Sphere(position=(-0.35,1.54,-4.15), radius = 0.075, material = smile))
+raytracer.scene.append(Sphere(position=(-0.13,1.49,-4.15), radius = 0.075, material = smile))
+raytracer.scene.append(Sphere(position=(0.12,1.51,-4.15), radius = 0.075, material = smile))
+raytracer.scene.append(Sphere(position=(0.35,1.55,-4.15), radius = 0.075, material = smile))
 
 #Ojos
-raytracer.scene.append(Sphere(position=(0.145,2.04,-4.1), radius = 0.05, material = sclera))
-raytracer.scene.append(Sphere(position=(-0.145,2.04,-4.1), radius = 0.05, material = sclera))
-raytracer.scene.append(Sphere(position=(-0.145,2.03,-4.05), radius = 0.025, material = coal))
-raytracer.scene.append(Sphere(position=(0.145,2.03,-4.05), radius = 0.025, material = coal))
+raytracer.scene.append(Sphere(position=(0.145,2.04,-4.1), radius = 0.05, material = eyes))
+raytracer.scene.append(Sphere(position=(-0.145,2.04,-4.1), radius = 0.05, material = eyes))
+raytracer.scene.append(Sphere(position=(-0.145,2.03,-4.05), radius = 0.025, material = ojo))
+raytracer.scene.append(Sphere(position=(0.145,2.03,-4.05), radius = 0.025, material = ojo))
 
 
 
