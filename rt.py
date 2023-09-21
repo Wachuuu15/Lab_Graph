@@ -98,11 +98,10 @@ class Raytracer(object):
                                 shadowIntersect = None
 
                                 if light.lightType == "Directional":
-                                    
+                                
 
-
-                                diffuseColor = [(diffuseColor[i] + light.getDiffuseColor(intercept)[i]) for i in range(3)]
-                                specularColor = [(specularColor[i] + light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
+                                    diffuseColor = [(diffuseColor[i] + light.getDiffuseColor(intercept)[i]) for i in range(3)]
+                                    specularColor = [(specularColor[i] + light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
 
 
                         
