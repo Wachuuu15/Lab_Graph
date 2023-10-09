@@ -111,7 +111,7 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.substractV(light.point, intercept.point)
+                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
                         lightDir = Numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
@@ -121,7 +121,7 @@ class Raytracer(object):
                         specularColor = [(specularColor[i]+light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
         
         elif material.matType == REFLECTIVE:
-            reflect = Numpi.reflectVector(intercept.normal, [i*-1 for i in rayDirection])
+            reflect = Numpi.reflectVector(intercept.normal, Numpi.deny_array(rayDirection))
             reflectIntercept = self.rtCastRay(intercept.point, reflect, intercept.obj, recursion + 1)
             reflectColor = self.rtRayColor(reflectIntercept, reflect, recursion + 1)
             
@@ -131,7 +131,7 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.substractV(light.point, intercept.point)
+                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
                         lightDir = Numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
@@ -141,9 +141,9 @@ class Raytracer(object):
         
         elif material.matType == TRANSPARENT:
 
-            outside = Numpi.dotProd(rayDirection, intercept.normal) < 0
+            outside = Numpi.dot_product(rayDirection, intercept.normal) < 0
 
-            bias = Numpi.VxE(intercept.normal, 0.001)
+            bias = Numpi.multiply_scalar_array(0.001,intercept.normal)
             
 
             reflect = Numpi.reflectVector(intercept.normal, [i*-1 for i in rayDirection])
@@ -157,7 +157,7 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.substractV(light.point, intercept.point)
+                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
                         lightDir = Numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
@@ -167,15 +167,15 @@ class Raytracer(object):
             
 
             if not totalInternalReflection(intercept.normal, rayDirection, 1.0, material.ior):
-                refract = reflectorVector(intercept.normal, rayDirection, 1.0, material.ior)
-                refractOrigin =  Numpi.substractV(intercept.point, bias) if outside else Numpi.addV(intercept.point, bias)
+                refract = refractVector(intercept.normal, rayDirection, 1.0, material.ior)
+                refractOrigin =  Numpi.subtract_arrays(intercept.point, bias) if outside else Numpi.add_arrays(intercept.point, bias)
                 refractIntercept = self.rtCastRay(refractOrigin, refract, None, recursion + 1)
                 refractColor = self.rtRayColor(refractIntercept, refract, recursion+1)
 
                
                 kr, kt = fresnel(intercept.normal, rayDirection, 1.0, material.ior)
-                reflectColor = Numpi.VxE(reflectColor, kr)
-                refractColor = Numpi.VxE(refractColor, kt)
+                reflectColor = Numpi.multiply_scalar_array(reflectColor, kr)
+                refractColor = Numpi.multiply_scalar_array(refractColor, kt)
             
         lightColor = [(ambientColor[i]+diffuseColor[i]+specularColor[i]+reflectColor[i] + refractColor[i]) for i in range(3)]  
         

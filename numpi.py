@@ -113,28 +113,68 @@ class Numpi:
     def vecResta(v1, v2):
         resta = (v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2])
         return resta
-
-    def vecMulti(v1, v2):
-        if len(v1) != len(v2):
-            print("No hay misma cantidad de vectores")
+    
+    def deny_array(vector):
+        vector = list(vector)
+        for i in range(len(vector)):
+            vector[i] *= -1
         
-        x1, y1, z1 = v1
-        x2, y2, z2 = v2
-        
-        rx = y1 * z2 - z1 * y2
-        ry = z1 * x2 - x1 * z2
-        rz = x1 * y2 - y1 * x2
+        return vector
 
-        multi = (rx, ry, rz)
-        return multi
+    def subtract_arrays(array1, array2):
+        if len(array1) != len(array2):
+            raise ValueError("Los arrays deben tener la misma longitud.")
+
+        result = []
+        for i in range(len(array1)):
+            result.append(array1[i] - array2[i])
+
+        return tuple(result)
     
     def dot_product(vector_a, vector_b):
         if len(vector_a) != len(vector_b):
             raise ValueError("Los vectores tienen que ser del mismo tamaño")
         
-        result = 0
-        for i in range(len(vector_a)):
-            result += vector_a[i] * vector_b[i]
-        
-        return result
+        product = sum(x * y for x, y in zip(vector_a, vector_b))
+        return product
+    
+    def add_arrays(array1, array2):
+        if len(array1) != len(array2):
+            raise ValueError("Los arrays deben tener la misma longitud.")
 
+        result = []
+        for i in range(len(array1)):
+            result.append(array1[i] + array2[i])
+
+        return tuple(result)
+    
+    def multiply_scalar_array(scalar, array):
+        result = []
+        for i in range(len(array)):
+            result.append(scalar * array[i])
+
+        return tuple(result)
+    
+    #Sacar magnitud de un vector
+    def magV(vector):
+        vectorList = list(vector)
+        return math.sqrt(sum(e ** 2 for e in vectorList))
+
+    
+   #Normalizacion
+    def normalizeV(vector):
+        vectorList = list(vector)
+        mag = math.sqrt(sum(e ** 2 for e in vectorList))
+        if mag == 0: #error if magnitude is 0
+            print("Unable to normalize")
+        
+        normVector = [e / mag for e in vectorList]
+        return normVector
+        
+
+    def divide_array_scalar(array,scalar):
+        result = []
+        for i in range(len(array)):
+            result.append(array[i]/scalar)
+
+        return tuple(result)

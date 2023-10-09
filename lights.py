@@ -2,29 +2,32 @@ import numpi as Numpi
 from math import acos, asin
 
 
-def reflectorVector(normal, incident, n1, n2):
-    #Snell's Law
-    c1 = Numpi.dotProd(normal, incident)
+def reflectVector(normal,direction):
+    reflect = 2*Numpi.dot_product(normal,direction)
+    reflect = Numpi.multiply_scalar_array(reflect,normal)
+    reflect = Numpi.subtract_arrays(reflect,direction)
+    reflect = Numpi.normalizeV(reflect)
     
-    if c1 < 0:
-        c1 = -c1
-    else: 
-        normal = [i*-1 for i in normal]
-        n1, n2 = n2, n1
+    return reflect
+
+def refractVector(normal,incident,n1,n2):
+    #Snell's Law
+    c1 = Numpi.dot_product(normal,incident)
+    if c1<0:
+        c1=-c1
+    else:
+        normal = Numpi.deny_array(normal)
+        n1,n2=n2,n1
     
     n = n1/n2
     
-    temp1 = Numpi.VxE(Numpi.addV(incident,Numpi.VxE(normal,c1)), n)
-    temp2 = Numpi.VxE(normal, (1-n**2*(1-c1**2))**0.5)
-    
-    t = Numpi.substractV(temp1, temp2)
-    
-    t = Numpi.normalizeV(t)
-    
-    return t
+    T = Numpi.subtract_arrays(Numpi.multiply_scalar_array(n,(Numpi.add_arrays(incident,Numpi.multiply_scalar_array(c1,normal)))),Numpi.multiply_scalar_array((1-n**2*(1-c1**2))**0.5,normal))
+    T = Numpi.normalizeV(T)
+    return T
+
 
 def totalInternalReflection(normal, incident, n1, n2):
-    c1 = Numpi.dotProd(normal, incident)
+    c1 = Numpi.dot_product(normal, incident)
     
     if c1 < 0:
         c1 = -c1
@@ -40,7 +43,7 @@ def totalInternalReflection(normal, incident, n1, n2):
     return theta1 >= thetaC
 
 def fresnel(normal, incident, n1, n2):
-    c1 = Numpi.dotProd(normal, incident)
+    c1 = Numpi.dot_product(normal, incident)
     
     if c1 < 0:
         c1 = -c1
@@ -82,12 +85,12 @@ class AmbientLight(Light):
 
 class DirectionalLight(Light):
     def __init__(self, direction=(0,-1,0), intensity = 1,color=(1, 1, 1)):
-        self.direction = direction
+        self.direction=Numpi.normalizeV(direction)
         super().__init__(intensity, color, "Directional")
 
     def getDiffuseColor(self, intercept):
         dir = [(i* -1) for i in self.direction]
-        intensity = Numpi.dot(intercept.normal, dir) * self.intensity
+        intensity = Numpi.dot_product(intercept.normal, dir) * self.intensity
         intensity = max(0, min(1, intensity))
         intensity *= 1 - intercept.obj.material.ks
         
@@ -97,11 +100,11 @@ class DirectionalLight(Light):
         dir =[(i*-1) for i in self.direction]
         reflect = Numpi.reflectVector(intercept.normal, dir)
         
-        viewDir = Numpi.substractV(viewPos,intercept.point)
+        viewDir = Numpi.subtract_arrays(viewPos,intercept.point)
         viewDir = Numpi.normalizeV(viewDir)
         
         #Cambia dependiendo de la superficie
-        specIntensity = max(0, Numpi.dotProd(viewDir, reflect))** intercept.obj.material.spec
+        specIntensity = max(0, Numpi.dot_product(viewDir, reflect))** intercept.obj.material.spec
         specIntensity *= intercept.obj.material.ks
         specIntensity *= self.intensity
         
@@ -115,11 +118,11 @@ class PointLight(Light):
         super().__init__(intensity, color, "Point")
         
     def getDiffuseColor(self, intercept):
-        dir = Numpi.substractV(self.point, intercept.point)
-        R = Numpi.normalizeV(dir)
-        dir = dir/R
+        dir = Numpi.subtract_arrays(self.point, intercept.point)
+        R = Numpi.magV(dir)
+        dir = Numpi.divide_array_scalar(dir,R)
         
-        intensity = Numpi.dotProd(intercept.normal, dir) * self.intensity
+        intensity = Numpi.dot_product(intercept.normal, dir) * self.intensity
         intensity *= 1 - intercept.obj.material.ks
         
         #Ley de cuadrados inversos
@@ -136,16 +139,16 @@ class PointLight(Light):
         return diffuseColor
     
     def getSpecularColor(self, intercept, viewPos):
-        dir = Numpi.substractV(self.point, intercept.point)
+        dir = Numpi.subtract_arrays(self.point, intercept.point)
         R = Numpi.magV(dir)
         dir = Numpi.normalizeV(dir)
         
         reflect = Numpi.reflectVector(intercept.normal, dir)
         
-        viewDir = Numpi.substractV(viewPos,intercept.point)
+        viewDir = Numpi.subtract_arrays(viewPos,intercept.point)
         viewDir = Numpi.normalizeV(viewDir)
         
-        specIntensity = max(0, Numpi.dotProd(viewDir, reflect))** intercept.obj.material.spec
+        specIntensity = max(0, Numpi.dot_product(viewDir, reflect))** intercept.obj.material.spec
         specIntensity *= intercept.obj.material.ks
         specIntensity *= self.intensity
         
