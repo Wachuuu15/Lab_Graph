@@ -15,12 +15,13 @@ screen.set_alpha(None)
 
 
 raytracer = Raytracer(screen)
-raytracer.envMap = pygame.image.load("pics/img.jpg")
+raytracer.envMap = pygame.image.load("pics/wal.png")
 raytracer.rtClearColor(0.25,0.25,0.25)
 
 
 #texture
-flowTexture = pygame.image.load("pics/img.jpg")
+starsTexture = pygame.image.load("pics/stars.png")
+mirrorballTexture = pygame.image.load("pics/mirrorball.png")
 
 
 #Materiales
@@ -28,11 +29,11 @@ brick = Material(diffuse=(1,0.4,0.4),spec=8,Ks=0.01)
 grass = Material(diffuse=(0.4,1,0.4),spec=32,Ks=0.1)
 water = Material(diffuse=(0.4,0.4,1),spec=256,Ks=0.2)
 concrete = Material(diffuse=(0.5,0.5,0.5),spec=256,Ks=0.2)
-wall = Material(texture = wallTexture,spec=64,Ks=0.1)
+stars = Material(texture = starsTexture,spec=64,Ks=0.1)
 
 mirror = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.2,matType=REFLECTIVE)
 blueMirror = Material(diffuse=(0.4,0.4,0.9),spec=32,Ks=0.15,matType=REFLECTIVE)
-earth = Material(texture = earthTexture,spec=64,Ks=0.1,matType=OPAQUE)
+mirrorball = Material(texture = mirrorballTexture,spec=64,Ks=0.1,matType=OPAQUE)
 glass = Material(diffuse=(0.9,0.9,0.9),spec=64,Ks=0.15,ior=1.5,matType=TRANSPARENT)
 diamond = Material(diffuse=(0.9,0.9,0.9),spec=128,Ks=0.2,ior=2.417,matType=TRANSPARENT)
 realWater = Material(diffuse=(0.4,0.4,0.9),spec=128,Ks=0.2,ior=1.33,matType=TRANSPARENT)
@@ -53,8 +54,8 @@ raytracer.scene.append(Plane(position=(0,height,0),normal=(0,-1,0),material=conc
 raytracer.scene.append(Plane(position=(0,-height/2,0),normal=(0,1,0),material=concrete))
 
 #Cubos
-raytracer.scene.append(AABB(position=(1,1.5,-5),size=(1,1,1),material=earth))
-raytracer.scene.append(AABB(position=(-1,-0.5,-3.2),size=(1,1,1),material=wall))
+raytracer.scene.append(AABB(position=(1,1.5,-5),size=(1,1,1),material=mirrorball))
+raytracer.scene.append(AABB(position=(-1,-0.5,-3.2),size=(1,1,1),material=stars))
 
 #Discos
 raytracer.scene.append(Disk(position=(2.1,0.5,-5),normal=(-1,0,0),radius=1,material=blueMirror))
