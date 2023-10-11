@@ -56,6 +56,7 @@ raytracer.scene.append(Plane(position=(0,-height/2,0),normal=(0,1,0),material=co
 #Cubos
 raytracer.scene.append(AABB(position=(1,1.5,-5),size=(1,1,1),material=mirrorball))
 raytracer.scene.append(AABB(position=(-1,-0.5,-3.2),size=(1,1,1),material=stars))
+raytracer.scene.append(AABB(position=(2,1.5,-2),size=(1,1,1),material=water))
 
 #Discos
 raytracer.scene.append(Disk(position=(2.1,0.5,-5),normal=(-1,0,0),radius=1,material=blueMirror))
