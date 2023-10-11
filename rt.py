@@ -1,7 +1,7 @@
 from math import tan, pi, atan2, acos
 import math 
 import numpy as np
-import numpi as Numpi
+import numpi
 import random
 import pygame
 from materials import *
@@ -56,18 +56,24 @@ class Raytracer(object):
             else:
                 self.screen.set_at((x,y),self.currColor)
 
-    def rtCastRay(self, orig, dir):
-        depht = float('inf')
-        intercept = None
+  
+    def rtCastRay(self,orig,dir,sceneObj=None,recursion=0):
+        if recursion >= MAX_RECURSION_DEPTH:
+            return None
+        
+        depth = float('inf')
+        intercept=None
         hit = None
+      
 
         for obj in self.scene:
-            intercept = obj.ray_intersect(orig, dir)
-            if intercept != None:
-                if intercept.distance < depht:
-                    hit = intercept
-                    depht= intercept.distance
-
+            if sceneObj != obj:
+                intercept = obj.ray_intersect(orig,dir)
+                if intercept!=None:
+                    if intercept.distance<depth:
+                        hit = intercept
+                        depth = intercept.distance
+        
         return hit
 
     def rtRayColor(self, intercept, rayDirection, recursion=0):
@@ -111,17 +117,17 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
-                        lightDir = Numpi.normalizeV(lightDir)
+                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
+                        lightDir = numpi.normalizeV(lightDir)
                         
-                    shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
+                    shadowIntersect = self.rtCastRay(intercept.point,lightDir,intercept.obj)
                     
                     if shadowIntersect==None:
                         diffuseColor = [(diffuseColor[i]+light.getDiffuseColor(intercept)[i]) for i in range(3)]
                         specularColor = [(specularColor[i]+light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
         
         elif material.matType == REFLECTIVE:
-            reflect = Numpi.reflectVector(intercept.normal, Numpi.deny_array(rayDirection))
+            reflect = reflectVector(intercept.normal, numpi.deny_array(rayDirection))
             reflectIntercept = self.rtCastRay(intercept.point, reflect, intercept.obj, recursion + 1)
             reflectColor = self.rtRayColor(reflectIntercept, reflect, recursion + 1)
             
@@ -131,8 +137,8 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
-                        lightDir = Numpi.normalizeV(lightDir)
+                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
+                        lightDir = numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
                     
@@ -141,13 +147,13 @@ class Raytracer(object):
         
         elif material.matType == TRANSPARENT:
 
-            outside = Numpi.dot_product(rayDirection, intercept.normal) < 0
+            outside = numpi.dot_product(rayDirection, intercept.normal) < 0
 
-            bias = Numpi.multiply_scalar_array(0.001,intercept.normal)
+            bias = numpi.multiply_scalar_array(0.001,intercept.normal)
             
 
-            reflect = Numpi.reflectVector(intercept.normal, [i*-1 for i in rayDirection])
-            reflectOrigin =  Numpi.addV(intercept.point, bias) if outside else Numpi.substractV(intercept.point, bias)
+            reflect = numpi.reflectVector(intercept.normal, [i*-1 for i in rayDirection])
+            reflectOrigin =  numpi.addV(intercept.point, bias) if outside else numpi.substractV(intercept.point, bias)
             reflectIntercept = self.rtCastRay(reflectOrigin, reflect, None, recursion + 1)
             reflectColor = self.rtRayColor(reflectIntercept, reflect, recursion+1)
             
@@ -157,8 +163,8 @@ class Raytracer(object):
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = Numpi.subtract_arrays(light.point, intercept.point)
-                        lightDir = Numpi.normalizeV(lightDir)
+                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
+                        lightDir = numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
                     
@@ -168,14 +174,14 @@ class Raytracer(object):
 
             if not totalInternalReflection(intercept.normal, rayDirection, 1.0, material.ior):
                 refract = refractVector(intercept.normal, rayDirection, 1.0, material.ior)
-                refractOrigin =  Numpi.subtract_arrays(intercept.point, bias) if outside else Numpi.add_arrays(intercept.point, bias)
+                refractOrigin =  numpi.subtract_arrays(intercept.point, bias) if outside else numpi.add_arrays(intercept.point, bias)
                 refractIntercept = self.rtCastRay(refractOrigin, refract, None, recursion + 1)
                 refractColor = self.rtRayColor(refractIntercept, refract, recursion+1)
 
                
                 kr, kt = fresnel(intercept.normal, rayDirection, 1.0, material.ior)
-                reflectColor = Numpi.multiply_scalar_array(reflectColor, kr)
-                refractColor = Numpi.multiply_scalar_array(refractColor, kt)
+                reflectColor = numpi.multiply_scalar_array(reflectColor, kr)
+                refractColor = numpi.multiply_scalar_array(refractColor, kt)
             
         lightColor = [(ambientColor[i]+diffuseColor[i]+specularColor[i]+reflectColor[i] + refractColor[i]) for i in range(3)]  
         
@@ -199,7 +205,7 @@ class Raytracer(object):
                 pY*=self.topEdge
                 
                 direction = (pX,pY,-self.nearPlane)
-                direction = Numpi.normalizeV(direction)
+                direction = numpi.normalizeV(direction)
                 
                 intercept = self.rtCastRay(self.camPosition, direction)
                 rayColor = self.rtRayColor(intercept, direction)

@@ -1,5 +1,4 @@
-import numpi as Numpi
-import numpy as np
+import numpi
 from math import tan, pi, atan2, acos
 
 class Intercept(object):
@@ -12,23 +11,23 @@ class Intercept(object):
 
 
 class Shape(object):
-    def __init__(self, positon, material):
-        self.positon = positon
+    def __init__(self, position, material):
+        self.position = position  # Cambio positon a position
         self.material = material
 
-
-    def ray_intersect(self,orig,dir):
+    def ray_intersect(self, orig, dir):
         return None
-    
+
+
 class Sphere(Shape):
     def __init__(self,position,radius, material):
         self.radius = radius
         super().__init__(position, material)
 
     def ray_intersect(self, orig, dir):
-        L = np.subtract(self.positon, orig)
-        lengthL = np.linalg.norm(L)
-        tca = np.dot(L, dir)
+        L = numpi.subtract_arrays(self.positon, orig)
+        lengthL = numpi.magV(L)
+        tca = numpi.dot_product(L, dir)
         d = (lengthL ** 2 - tca ** 2) ** 0.5
 
         if d > self.radius:
@@ -46,36 +45,41 @@ class Sphere(Shape):
             return None
         # P = O + D *t0
 
-        P = np.add(orig, t0 * np.array(dir))
-        normal = np.subtract(P,self.positon)
-        normal = normal/np.linalg.norm(normal)
+        P = numpi.add_arrays(orig,numpi.multiply_scalar_array(t0,dir))
+        normal = numpi.subtract_arrays(P,self.positon)
+        normal = numpi.normalizeV(normal)
+
+        u = (atan2(normal[2],normal[0])/(2*pi))+0.5
+        v = acos(normal[1])/pi
 
         return Intercept(distance = t0,
                          point= P,
                          normal = normal,
+                         texcoords=(u,v),
                          obj = self)
     
 class Plane(Shape):
     def __init__(self, position, normal, material):
-        self.normal = normal/np.linalg.norm(normal)
+        self.normal = numpi.normalizeV(normal)
         super().__init__(position, material)
     
     def ray_intersect(self, orig, dir):
         #Distancia = (planePos - origRay) o normal) / (dirRay o normal)
         
-        denom = np.dot(dir, self.normal)
+        denom = numpi.dot_product(dir, self.normal)
         
         if abs(denom) <= 0.0001:
             return None
         
-        num = np.dot(np.subtract(self.position, orig), self.normal)
+        num = numpi.dot_product(numpi.subtract_arrays(self.position, orig), self.normal)
         t = num/denom
         
         if t<0:
             return None
         
         #P = O+D*t0
-        p = np.add(orig, t*np.array(dir))
+        p = numpi.add_arrays(orig, numpi.multiply_scalar_array(t,dir))
+        
         
         return Intercept(distance = t,
                          point = p,
@@ -94,8 +98,8 @@ class Disk(Plane):
         if planeIntersect is None:
             return None
         
-        contactDistance = np.subtract(planeIntersect.point, self.position)
-        contactDistance = np.linalg.norm(contactDistance)
+        contactDistance = numpi.subtract_arrays(planeIntersect.point, self.position)
+        contactDistance = numpi.magV(contactDistance)
         
         if contactDistance > self.radius:
             return None
@@ -122,14 +126,14 @@ class AABB(Shape):
         # self.lenghtZ = size[2]
 
         #sides
-        leftPlane = Plane(Numpi.add_arrays(self.position,[-size[0]/2,0,0]),(-1,0,0),material)
-        rightPlane = Plane(Numpi.add_arrays(self.position,[size[0]/2,0,0]),(1,0,0),material)
+        leftPlane = Plane(numpi.add_arrays(self.position,[-size[0]/2,0,0]),(-1,0,0),material)
+        rightPlane = Plane(numpi.add_arrays(self.position,[size[0]/2,0,0]),(1,0,0),material)
         
-        bottomPlane = Plane(Numpi.add_arrays(self.position,[0,-size[1]/2,0]),(0,-1,0),material)
-        topPlane = Plane(Numpi.add_arrays(self.position,[0,size[1]/2,0]),(0,1,0),material)
+        bottomPlane = Plane(numpi.add_arrays(self.position,[0,-size[1]/2,0]),(0,-1,0),material)
+        topPlane = Plane(numpi.add_arrays(self.position,[0,size[1]/2,0]),(0,1,0),material)
     
-        backPlane = Plane(Numpi.add_arrays(self.position,[0,0,-size[2]/2]),(0,0,-1),material)
-        frontPlane = Plane(Numpi.add_arrays(self.position,[0,0,size[2]/2]),(0,0,1),material)
+        backPlane = Plane(numpi.add_arrays(self.position,[0,0,-size[2]/2]),(0,0,-1),material)
+        frontPlane = Plane(numpi.add_arrays(self.position,[0,0,size[2]/2]),(0,0,1),material)
         
         self.planes.append(leftPlane)
         self.planes.append(rightPlane)
