@@ -173,7 +173,6 @@ class AABB(Shape):
                                 
                                 #Generar las uvs
                                 if abs(plane.normal[0])>0:
-                                    #Estoy en X, usamos Y y Z para crear las uvs
                                     u = (planePoint[1]-self.boundsMin[1])/(self.size[1]+0.002)
                                     v = (planePoint[2]-self.boundsMin[2])/(self.size[2]+0.002)
                                 elif abs(plane.normal[1])>0:
@@ -196,3 +195,66 @@ class AABB(Shape):
                          texcoords=(u,v),
                          obj=self)
     
+# class Donut
+
+class Triangle(Shape):
+    def __init__(self, vertices, material):
+        self.vertices = vertices
+        #super().__init__(position, material)
+        v0 = numpi.subtract_arrays(self.vertices[1], self.vertices[0])
+        v1 = numpi.subtract_arrays(self.vertices[2],self.vertices[0])
+        self.normal = numpi.normalizeV(numpi.crossProduct(v0,v1))
+
+        #
+        x = (vertices[0][0] + vertices[1][0]+vertices[2][0])/3
+        y = (vertices[0][1] + vertices[1][1]+vertices[2][1])/3
+        z = (vertices[0][2] + vertices[1][2]+vertices[2][2])/3
+
+        super().__init__((x,y,z), material)
+
+    def ray_intersect(self, orig, dir):
+        #The Ray And The Triangle Are Parallel
+        denom = numpi.dot_product(dir, self.normal)
+                
+        if abs(denom)<=0.0001:
+            return None
+        
+        d = -1*numpi.dot_product(self.normal,self.vertices[0])
+        num = -1*(numpi.dot_product(self.normal,orig)+d)
+        t = num/denom
+
+        if t<0:
+            return None
+        
+        P = numpi.add_arrays(orig,numpi.multiply_scalar_array(t,dir))
+
+        #test if the dot product of the vector along the edge and the vector defined by the first vertex of the tested edge
+        #edge 0
+        edge0 = numpi.subtract_arrays(self.vertices[1],self.vertices[0]) #v1 - v0; 
+        vp0 = numpi.subtract_arrays(P,self.vertices[0]) #Vec3f vp0 = P - v0;
+        C = numpi.crossProduct(edge0,vp0);
+        if numpi.dot_product(self.normal,C)<0: #if (N.dotProduct(C) < 0) return false; P is on the right side
+            return None
+        
+        #edge 1
+        edge1 = numpi.subtract_arrays(self.vertices[2], self.vertices[1])    #Vec3f edge1 = v2 - v1; 
+        vp1 = numpi.subtract_arrays(P, self.vertices[1])    #Vec3f vp1 = P - v1;
+        C = numpi.crossProduct(edge1,vp1);
+        if numpi.dot_product(self.normal, C)<0:    #if (N.dotProduct(C) < 0)  return false; // P is on the right side
+            return None
+    
+        #edge 2
+        edge2 = numpi.subtract_arrays(self.vertices[0],self.vertices[2]) #v0 - v2; 
+        vp2 = numpi.subtract_arrays(P,self.vertices[2]) #Vec3f vp2 = P - v2;
+        C = numpi.crossProduct(edge2,vp2);
+        if numpi.dot_product(self.normal, C)<0:   #if (N.dotProduct(C) < 0) return false; // P is on the right side;
+            return None 
+        
+        u,v,w = numpi.barycentricCoords(self.vertices[0],self.vertices[1],self.vertices[2],P)
+
+        
+        return Intercept(distance=t,
+                         point=P,
+                         normal=self.normal,
+                         texcoords=(u,v),
+                         obj=self)  

@@ -21,6 +21,22 @@ def mulVect(m1, vector):
         for j in range(4):
             vecRes[i] += (m1[i][j] * vector[j])
     return vecRes
+
+#Producto cruz
+def crossProduct(vector1, vector2):
+    if len(vector1) != 3 or len(vector2) != 3:
+        raise ValueError("Los vectores deben tener tres componentes.")
+
+    a1, a2, a3 = vector1
+    b1, b2, b3 = vector2
+
+    producto_cruz_x = a2 * b3 - a3 * b2
+    producto_cruz_y = a3 * b1 - a1 * b3
+    producto_cruz_z = a1 * b2 - a2 * b1
+
+    return (producto_cruz_x, producto_cruz_y, producto_cruz_z)
+
+
     
 def multi4x4matrix(matrix1, matrix2):
     resultado = [
@@ -65,7 +81,7 @@ def barycentricCoords(A, B, C, P):
         return (u, v, w)
     else:
         return None
-
+    
 def inverse_matrix(matrix):
     if len(matrix) != 4 or len(matrix[0]) != 4:
         print("La matriz debería ser de 4x4.")
@@ -135,7 +151,9 @@ def multiply_scalar_array(scalar, array):
     result = []
     for i in range(len(array)):
         result.append(scalar * array[i])
+
     return tuple(result)
+
 
 def divide_array_scalar(array, scalar):
     result = []

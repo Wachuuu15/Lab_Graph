@@ -106,110 +106,112 @@ class Raytracer(object):
         diffuseColor = [0,0,0]
         specularColor = [0,0,0]
         finalColor = [0,0,0]
-        
-        if material.matType == OPAQUE:
+
+        if material.matType == OPAQUE:  
             for light in self.lights:
-                if light.lightType == "Ambient":
+                if light.lightType=="Ambient":
                     ambientColor = [(ambientColor[i]+light.getLightColor()[i]) for i in range(3)]
-                
+                                
                 else:
+                    lightDir = None
+                    if light.lightType=="Directional":
+                        lightDir = [(i*-1) for i in light.direction]
+                    elif light.lightType=="Point":
+                        lightDir = numpi.subtract_arrays(light.point,intercept.point)
+                        lightDir = numpi.normalizeV(lightDir)
+                                    
+                    shadowIntersect = self.rtCastRay(intercept.point,lightDir,intercept.obj)
+
+                    if shadowIntersect == None:
+                        diffuseColor = [(diffuseColor[i]+light.getDiffuseColor(intercept)[i]) for i in range(3)]
+                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept,self.camPosition)[i]) for i in range(3)]                                
+                        
+        elif material.matType == REFLECTIVE:
+            reflect = reflectVector(intercept.normal,numpi.deny_array(rayDirection))
+            reflectIntercept = self.rtCastRay(intercept.point,reflect,intercept.obj,recursion+1)
+            reflectColor = self.rtRayColor(reflectIntercept,reflect,recursion+1)
+            
+            for light in self.lights:
+                if light.lightType!="Ambient":
+
                     lightDir = None
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
+                        lightDir = numpi.subtract_arrays(light.point,intercept.point)
                         lightDir = numpi.normalizeV(lightDir)
                         
                     shadowIntersect = self.rtCastRay(intercept.point,lightDir,intercept.obj)
-                    
-                    if shadowIntersect==None:
-                        diffuseColor = [(diffuseColor[i]+light.getDiffuseColor(intercept)[i]) for i in range(3)]
-                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
-        
-        elif material.matType == REFLECTIVE:
-            reflect = reflectVector(intercept.normal, numpi.deny_array(rayDirection))
-            reflectIntercept = self.rtCastRay(intercept.point, reflect, intercept.obj, recursion + 1)
-            reflectColor = self.rtRayColor(reflectIntercept, reflect, recursion + 1)
-            
-            for light in self.lights:
-                if light.lightType != "Ambient":
-                    lightDir = None
-                    if light.lightType == "Directional":
-                        lightDir = [(i*-1) for i in light.direction]
-                    elif light.lightType == "Point":
-                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
-                        lightDir = numpi.normalizeV(lightDir)
-                        
-                    shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
-                    
+
                     if shadowIntersect == None:
-                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
+                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept,self.camPosition)[i]) for i in range(3)]
         
         elif material.matType == TRANSPARENT:
-
-            outside = numpi.dot_product(rayDirection, intercept.normal) < 0
-
+            outside = numpi.dot_product(rayDirection,intercept.normal)<0
             bias = numpi.multiply_scalar_array(0.001,intercept.normal)
-            
 
-            reflect = numpi.reflectVector(intercept.normal, [i*-1 for i in rayDirection])
-            reflectOrigin =  numpi.addV(intercept.point, bias) if outside else numpi.substractV(intercept.point, bias)
-            reflectIntercept = self.rtCastRay(reflectOrigin, reflect, None, recursion + 1)
-            reflectColor = self.rtRayColor(reflectIntercept, reflect, recursion+1)
+            reflect = reflectVector(intercept.normal,numpi.deny_array(rayDirection))
+            reflectOrig = numpi.add_arrays(intercept.point,bias) if outside else numpi.subtract_arrays(intercept.point,bias)
+            reflectIntercept = self.rtCastRay(reflectOrig,reflect,None,recursion+1)
+            reflectColor = self.rtRayColor(reflectIntercept,reflect,recursion+1)
             
             for light in self.lights:
-                if light.lightType != "Ambient":
+                if light.lightType!="Ambient":
+
                     lightDir = None
                     if light.lightType == "Directional":
                         lightDir = [(i*-1) for i in light.direction]
                     elif light.lightType == "Point":
-                        lightDir = numpi.subtract_arrays(light.point, intercept.point)
+                        lightDir = numpi.subtract_arrays(light.point,intercept.point)
                         lightDir = numpi.normalizeV(lightDir)
                         
-                    shadowIntersect = self.rtCastRay(intercept.point, lightDir, intercept.obj)
-                    
+                    shadowIntersect = self.rtCastRay(intercept.point,lightDir,intercept.obj)
+
                     if shadowIntersect == None:
-                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
+                        specularColor = [(specularColor[i]+light.getSpecularColor(intercept,self.camPosition)[i]) for i in range(3)]
+          
             
-
-            if not totalInternalReflection(intercept.normal, rayDirection, 1.0, material.ior):
-                refract = refractVector(intercept.normal, rayDirection, 1.0, material.ior)
-                refractOrigin =  numpi.subtract_arrays(intercept.point, bias) if outside else numpi.add_arrays(intercept.point, bias)
-                refractIntercept = self.rtCastRay(refractOrigin, refract, None, recursion + 1)
-                refractColor = self.rtRayColor(refractIntercept, refract, recursion+1)
-
-               
-                kr, kt = fresnel(intercept.normal, rayDirection, 1.0, material.ior)
-                reflectColor = numpi.multiply_scalar_array(reflectColor, kr)
-                refractColor = numpi.multiply_scalar_array(refractColor, kt)
+            if not totalInternalReflection(intercept.normal,rayDirection,1.0,material.ior):
+                refract = refractVector(intercept.normal,rayDirection,1.0,material.ior)
+                refractOrig = numpi.subtract_arrays(intercept.point,bias) if outside else numpi.add_arrays(intercept.point,bias)
+                refractIntercept = self.rtCastRay(refractOrig,refract,None,recursion+1)
+                refractColor = self.rtRayColor(refractIntercept,refract,recursion+1)
             
-        lightColor = [(ambientColor[i]+diffuseColor[i]+specularColor[i]+reflectColor[i] + refractColor[i]) for i in range(3)]  
+                Kr,Kt = fresnel(intercept.normal,rayDirection,1.0,material.ior)
+                reflectColor = numpi.multiply_scalar_array(Kr,reflectColor)
+                refractColor = numpi.multiply_scalar_array(Kt,refractColor)
+            
         
-        finalColor = [min(1,surfaceColor[i]*lightColor[i])for i in range(3)]
+        lightColor = [(ambientColor[i]+diffuseColor[i]+specularColor[i]+reflectColor[i]+refractColor[i]) for i in range(3)]
+        finalColor = [min(1,surfaceColor[i]*lightColor[i]) for i in range(3)]
+            
         return finalColor
-    
-    
+
     def rtRender(self):
-        indexes = [(i,j) for i in range(self.vpWidth) for j in range(self.vpHeight)]
-        random.shuffle(indexes)
-        
-        for i,j in indexes:
-            x = i+self.vpX
-            y = j+self.vpY
-            if (0<=x<self.width) and (0<=y<self.height):
-              
-                pX = ((x+0.5-self.vpX)/self.vpWidth)*2-1
-                pY = ((y+0.5-self.vpY)/self.vpHeight)*2-1
-                
-                pX*=self.rightEdge
-                pY*=self.topEdge
-                
-                direction = (pX,pY,-self.nearPlane)
-                direction = numpi.normalizeV(direction)
-                
-                intercept = self.rtCastRay(self.camPosition, direction)
-                rayColor = self.rtRayColor(intercept, direction)
+        indeces = [(i,j) for i in range(self.vpWidth) for j in range(self.vpHeight)]
+        random.shuffle(indeces)        
+
+        for i, j in indeces:
+            x = i + self.vpX
+            y = j + self.vpY
+            
+            if 0<=x<self.width and 0<=y<self.height:
+                #Pasar de coordenadas de ventana a 
+                #coordenadas NDC (-1 a 1)
+                Px = ((x+0.5 - self.vpX)/self.vpWidth)*2-1
+                Py = ((y+0.5 - self.vpY)/self.vpHeight)*2-1
                     
-                if rayColor != None: 
+                Px *= self.rightEdge
+                Py *= self.topEdge
+                    
+                #Crear un rayo
+                direction = (Px,Py,-self.nearPlane)
+                direction = numpi.normalizeV(direction)
+                    
+                intercept = self.rtCastRay(self.camPosition,direction)
+                    
+                rayColor = self.rtRayColor(intercept,direction)
+                    
+                if rayColor!=None:
                     self.rtPoint(x,y,rayColor)
                     pygame.display.flip()
