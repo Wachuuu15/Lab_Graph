@@ -36,8 +36,24 @@ def crossProduct(vector1, vector2):
 
     return (producto_cruz_x, producto_cruz_y, producto_cruz_z)
 
+def VxE(v, e):
+    r = [e*v[i] for i in range(len(v))]
+    return r
 
-    
+def vecResta(v1, v2):
+    if len(v1) != len(v2):
+        raise ValueError("Se necesitan vectores de la misma magnitud.")
+
+    r = [v1[i] - v2[i] for i in range(len(v1))]
+    return r
+
+def vecDiv(v1, v2):
+    if len(v1) != len(v2):
+        raise ValueError("Se necesitan vectores de la misma magnitud.")
+
+    r = [v1[i] / v2[i] for i in range(len(v1))]
+    return r
+   
 def multi4x4matrix(matrix1, matrix2):
     resultado = [
         [0.0, 0.0, 0.0, 0.0],
@@ -110,9 +126,7 @@ def inverse_matrix(matrix):
     inverse = [row[4:] for row in augmented_matrix]
     return inverse
 
-def vecResta(v1, v2):
-    resta = (v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2])
-    return resta
+
     
 def deny_array(vector):
     vector = list(vector)
@@ -137,6 +151,9 @@ def dot_product(vector_a, vector_b):
     product = sum(x * y for x, y in zip(vector_a, vector_b))
     return product
 
+def doti(v1, v2):
+    return sum(x*y for x, y in zip(v1, v2))
+
 def add_arrays(array1, array2):
     if len(array1) != len(array2):
         raise ValueError("Los arrays deben tener la misma longitud.")
@@ -146,6 +163,14 @@ def add_arrays(array1, array2):
         result.append(array1[i] + array2[i])
 
     return tuple(result)
+
+def vecAdd(v1, v2):
+    if len(v1) != len(v2):
+        raise ValueError("Se necesitan vectores de la misma magnitud.")
+
+    r = [v1[i] + v2[i] for i in range(len(v1))]
+    return r
+
 
 def multiply_scalar_array(scalar, array):
     result = []

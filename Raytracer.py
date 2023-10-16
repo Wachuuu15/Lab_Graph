@@ -5,7 +5,7 @@ from figures import *
 from lights import *
 from materials import *
 
-width = 960
+width = 920
 height = 540
 
 pygame.init()
@@ -22,6 +22,8 @@ raytracer.rtClearColor(0.25,0.25,0.25)
 starsTexture = pygame.image.load("pics/stars.png")
 mirrorballTexture = pygame.image.load("pics/mirrorball.png")
 skyTexture = pygame.image.load("pics/midnight.png")
+sunsetTexture = pygame.image.load("pics/sunset.png")
+
 
 
 #Materiales
@@ -31,6 +33,7 @@ water = Material(diffuse=(0.4,0.4,1),spec=256,ks=0.2)
 concrete = Material(diffuse=(0.5,0.5,0.5),spec=256,ks=0.2)
 stars = Material(texture = starsTexture,spec=64,ks=0.1)
 sky = Material(texture = skyTexture,spec=30,ks=0.1)
+sunset = Material(diffuse=sunsetTexture,spec=256,ks=0.2)
 
 
 mirror = Material(diffuse=(0.9,0.9,0.9),spec=64,ks=0.2,matType=REFLECTIVE)
@@ -44,26 +47,15 @@ realWater = Material(diffuse=(0.4,0.4,0.9),spec=128,ks=0.2,ior=1.33,matType=TRAN
 
 #raytracer.scene.append(Sphere(position=(0,-1,3),radius=0.15,material=mirror))
 
-#Cubos
-raytracer.scene.append(AABB(position=(-2,1.5,-5),size=(1,1,1),material=sky))
-raytracer.scene.append(AABB(position=(2,-0.5,-3.2),size=(1,1,1),material=stars))
+raytracer.scene.append(Sphere(position=(0,-2,-10),radius= 2, material= brick))
 
-
-raytracer.scene.append(Triangle(vertices= [(-1, -2, -6), (0, 2, -6), (0.2, -2.5, -5.7)], material=realWater))
-raytracer.scene.append(Triangle(vertices=[(1.1, -2, -6), (0, 2, -6), (0.2, -2.5, -5.7)], material=realWater))
-
-raytracer.scene.append(Triangle(vertices=[(-1, 0, -5), (0, 2, -5), (1, 0, -5)], material=mirror))
-raytracer.scene.append(Triangle(vertices=[(-1, 0, -5), (0, 2, -6), (1, 0, -5)], material=mirror))
-
-
-raytracer.scene.append(Triangle(vertices= [(-2, -2, -6), (-2, 2, -6), (1, -2.5, -5.7)], material=mirrorball))
-raytracer.scene.append(Triangle(vertices=[(2, -2, -6), (-2, 2, -6), (1, -2.5, -5.7)], material=mirrorball))
 
 
 raytracer.lights.append(AmbientLight(intensity=2))
 raytracer.lights.append(DirectionalLight(direction=(0,0,-1),intensity=0.9))
 
 #raytracer.lights.append(PointLight(point=(1.5,0,-5),intensity=1,color=(1,0,1)))
+
 
 raytracer.rtClear()
 raytracer.rtRender()

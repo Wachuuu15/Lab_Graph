@@ -1,5 +1,6 @@
 import numpi
-from math import tan, pi, atan2, acos
+from math import tan, pi, atan2, acos, sqrt
+
 
 class Intercept(object):
     def __init__(self, distance, point, texcoords, normal, obj):
@@ -25,7 +26,7 @@ class Sphere(Shape):
         super().__init__(position, material)
 
     def ray_intersect(self, orig, dir):
-        L = numpi.subtract_arrays(self.positon, orig)
+        L = numpi.subtract_arrays(self.position, orig)
         lengthL = numpi.magV(L)
         tca = numpi.dot_product(L, dir)
         d = (lengthL ** 2 - tca ** 2) ** 0.5
@@ -46,7 +47,7 @@ class Sphere(Shape):
         # P = O + D *t0
 
         P = numpi.add_arrays(orig,numpi.multiply_scalar_array(t0,dir))
-        normal = numpi.subtract_arrays(P,self.positon)
+        normal = numpi.subtract_arrays(P,self.position)
         normal = numpi.normalizeV(normal)
 
         u = (atan2(normal[2],normal[0])/(2*pi))+0.5
@@ -197,6 +198,54 @@ class AABB(Shape):
     
 # class Donut
 
+
+#oval
+class Oval(Shape):
+    def __init__(self, position, radius, material):
+        self.radius = radius
+        super().__init__(position, material)
+
+    def ray_intersect(self, orig, dir):
+        l = numpi.vecResta(orig,self.position)
+        l = numpi.vecDiv(l,self.radius)
+
+        a = numpi.doti(dir,dir)
+        b = 2.0 * numpi.doti(dir,l)
+        c = numpi.doti(l, l) - 1.0
+
+        dis = (b**2) - (4*a*c)
+
+        if dis < 0:
+            return None
+        
+        t1 = (-b + sqrt(dis)) / (2 * a)
+        t2 = (-b - sqrt(dis)) / (2 * a)
+        
+        if t1 < 0 and t2 <0:
+            return None
+        
+        if t1 < t2:
+            t = t1
+        else:
+            t = t2
+            
+        p = numpi.vecAdd(orig, numpi.VxE(dir, t))
+        
+        normal = numpi.vecResta(p, self.position)
+        normal = numpi.vecDiv(normal, self.radius)
+        normal = numpi.normalizeV(normal)
+        
+        u = 1-((atan2(normal[2], normal[0])+pi)/(2*pi))
+        v = ((acos(normal[1])+pi)/2)/pi
+        
+        return Intercept(distance = t,
+                         point = p,
+                         normal = normal,
+                         texcoords= (u,v),
+                         obj = self)
+
+
+#triangle 3d
 class Triangle(Shape):
     def __init__(self, vertices, material):
         self.vertices = vertices

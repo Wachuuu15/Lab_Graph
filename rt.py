@@ -181,9 +181,8 @@ class Raytracer(object):
                 reflectColor = numpi.multiply_scalar_array(Kr,reflectColor)
                 refractColor = numpi.multiply_scalar_array(Kt,refractColor)
             
-        
         lightColor = [(ambientColor[i]+diffuseColor[i]+specularColor[i]+reflectColor[i]+refractColor[i]) for i in range(3)]
-        finalColor = [min(1,surfaceColor[i]*lightColor[i]) for i in range(3)]
+        finalColor = [min(1,surfaceColor[i]*lightColor[i])for i in range(3)]
             
         return finalColor
 
