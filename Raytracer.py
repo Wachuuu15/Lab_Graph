@@ -15,7 +15,7 @@ screen.set_alpha(None)
 
 
 raytracer = Raytracer(screen)
-raytracer.envMap = pygame.image.load("pics/rosa_n.jpg")
+raytracer.envMap = pygame.image.load("pics/celeste.jpg")
 raytracer.rtClearColor(0.25,0.25,0.25)
 
 #texture
@@ -43,17 +43,17 @@ realWater = Material(diffuse=(0.4,0.4,0.9),spec=128,ks=0.2,ior=1.33,matType=TRAN
 
 
 #figura 1
-raytracer.scene.append(Triangle(vertices=[(-1,-2,-6),(0,0,-6),(0.1,-2,-5.5)],material=water))
-raytracer.scene.append(Triangle(vertices=[(1.1,-2,-6),(0,0,-6),(0.1,-2,-5.5)],material=mirror))
+raytracer.scene.append(Triangle(vertices=[(-1,-2,-6),(0,0,-6),(0.1,-2,-5.5)],material=blueMirror))
+raytracer.scene.append(Triangle(vertices=[(1.1,-2,-6),(0,0,-6),(0.1,-2,-5.5)],material=blueMirror))
 
 #figura 2
-raytracer.scene.append(Sphere(position=(-2.5,1.5,-7),radius=1,material=mirror))
+raytracer.scene.append(Sphere(position=(-2.5,2,-7),radius=1,material=mirror))
 
 #figura 3
-raytracer.scene.append(Sphere(position=(-2.5,1.5,-7),radius=1,material=stars))
+raytracer.scene.append(Sphere(position=(-2,1,-7),radius=1,material=stars))
 
 #figura 4
-raytracer.scene.append(Sphere(position=(-2.5,-1.5,-7),radius=1,material=brick))
+raytracer.scene.append(Sphere(position=(-1,-3,-7),radius=1,material=brick))
 
 #figura 5
 raytracer.scene.append(Sphere(position=(0,-1.5,-7),radius=1,material=sky))
@@ -65,7 +65,16 @@ raytracer.scene.append(Sphere(position=(2.5,1.5,-7),radius=1,material=water))
 raytracer.scene.append(Sphere(position=(1,-2,-3),radius=0.5,material=diamond))
 
 #figura 8
-raytracer.scene.append(Sphere(position=(2,-1,-2),radius=1,material=diamond))
+#raytracer.scene.append(Sphere(position=(2,-1,-2),radius=1,material=diamond))
+
+#Cubos
+raytracer.scene.append(AABB(position=(-2,1.5,-5),size=(1,1,1),material=sky))
+raytracer.scene.append(AABB(position=(2,-0.5,-3.2),size=(1,1,1),material=stars))
+
+#Discos
+raytracer.scene.append(Disk(position=(2.1,0.5,-5),normal=(-1,0,0),radius=1,material=blueMirror))
+raytracer.scene.append(Disk(position=(0,0.5,-10),normal=(0,0,-1),radius=1.5,material=blueMirror))
+raytracer.scene.append(Disk(position=(-2.1,0.5,-5),normal=(-1,0,0),radius=1,material=blueMirror))
 
 
 raytracer.lights.append(AmbientLight(intensity=0.1))
