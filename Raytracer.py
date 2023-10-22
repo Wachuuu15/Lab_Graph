@@ -76,6 +76,8 @@ raytracer.scene.append(Disk(position=(2.1,0.5,-5),normal=(-1,0,0),radius=1,mater
 raytracer.scene.append(Disk(position=(0,0.5,-10),normal=(0,0,-1),radius=1.5,material=blueMirror))
 raytracer.scene.append(Disk(position=(-2.1,0.5,-5),normal=(-1,0,0),radius=1,material=blueMirror))
 
+cylinder = Cylinder(position=(0, 0, -5), height=3, radius=1, material=stars)
+
 
 raytracer.lights.append(AmbientLight(intensity=0.1))
 raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
