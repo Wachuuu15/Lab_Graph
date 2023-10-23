@@ -197,6 +197,50 @@ class AABB(Shape):
                          obj=self)
     
 # class Donut
+class Cylinder(Shape):
+    def __init__(self, position, radius, height, material):
+        self.radius = radius
+        self.height = height
+        super().__init__(position, material)
+        self.top_disk = Disk(numpi.add_arrays(position, [0, height / 2, 0]), [0, 1, 0], radius, material)
+        self.bottom_disk = Disk(numpi.add_arrays(position, [0, -height / 2, 0]), [0, -1, 0], radius, material)
+
+    def ray_intersect(self, orig, dir):
+        a = dir[0] ** 2 + dir[2] ** 2
+        b = 2 * (orig[0] * dir[0] + orig[2] * dir[2] - self.position[0] * dir[0] - self.position[2] * dir[2])
+        c = (orig[0] - self.position[0]) ** 2 + (orig[2] - self.position[2]) ** 2 - self.radius ** 2
+
+        delta = b ** 2 - 4 * a * c
+
+        if delta < 0:
+            return None
+
+        t0 = (-b + sqrt(delta)) / (2 * a)
+        t1 = (-b - sqrt(delta)) / (2 * a)
+
+        t = min(t0, t1)
+
+        if t < 0:
+            return None
+
+        point = numpi.add_arrays(orig, numpi.multiply_scalar_array(t, dir))
+
+        if point[1] < self.position[1] - self.height / 2 or point[1] > self.position[1] + self.height / 2:
+            return None
+
+        normal = list(numpi.subtract_arrays(point, self.position))
+        normal[1] = 0
+        normal = numpi.normalizeV(normal)
+
+
+        u = (atan2(normal[2], normal[0]) / (2 * pi)) + 0.5
+        v = (point[1] - self.position[1] + self.height / 2) / self.height
+
+        return Intercept(distance=t,
+                         point=point,
+                         normal=normal,
+                         texcoords=(u, v),
+                         obj=self)
 
 
 #oval
@@ -243,53 +287,6 @@ class Oval(Shape):
                          normal = normal,
                          texcoords= (u,v),
                          obj = self)
-
-class Cylinder(Shape):
-    def __init__(self, position, height, radius, material, direction=(0, 1, 0)):
-        self.height = height
-        self.radius = radius
-        self.direction = numpi.normalizeV(direction)
-        self.base1 = Disk(position, direction, radius, material)
-        self.base2 = Disk(numpi.vecAdd(position, [direction[i] * height for i in range(3)]), direction, radius, material)
-        super().__init__(position, material)
-
-    def ray_intersect(self, orig, dir):
-        min_distance = float('inf')
-        closest_intersect = None
-
-        # Intersectar con las bases
-        for base in [self.base1, self.base2]:
-            intersect = base.ray_intersect(orig, dir)
-            if intersect is not None and intersect.distance < min_distance:
-                min_distance = intersect.distance
-                closest_intersect = intersect
-
-        # Intersectar con el cuerpo del cilindro
-        ao = numpi.vecResta(orig, self.position)
-        delta = numpi.dot_product(dir, self.direction)
-        a = numpi.dot_product(dir, dir) - delta ** 2
-        b = 2 * (numpi.dot_product(dir, ao) - delta * numpi.dot_product(ao, self.direction))
-        c = numpi.dot_product(ao, ao) - numpi.dot_product(ao, self.direction) ** 2 - self.radius ** 2
-        discriminant = b ** 2 - 4 * a * c
-
-        if discriminant > 0:
-            t0 = (-b - sqrt(discriminant)) / (2 * a)
-            t1 = (-b + sqrt(discriminant)) / (2 * a)
-            t = min(t0, t1)
-
-            if t > 0 and t < min_distance:
-                P = numpi.add_arrays(orig, t, dir)
-                normal = numpi.vecResta(P, self.position)
-                normal = numpi.vecResta(normal, [self.direction[i] * numpi.dot_product(normal, self.direction) for i in range(3)])
-                normal_length = numpi.normalizeV(normal)
-                normal = [normal[i] / normal_length for i in range(3)]
-
-                # Verificar si el punto de intersección está dentro de la altura del cilindro
-                height_intersect = numpi.dot_product(numpi.vecResta(P, self.position), self.direction)
-                if 0 <= height_intersect <= self.height:
-                    return Intercept(distance=t, point=P, normal=normal, texcoords=None, obj=self)
-
-        return closest_intersect
 
 
 #triangle 3d
