@@ -23,7 +23,7 @@ starsTexture = pygame.image.load("pics/stars.png")
 mirrorballTexture = pygame.image.load("pics/sunset.png")
 skyTexture = pygame.image.load("pics/midnight.png")
 sunsetTexture = pygame.image.load("pics/sunset.png")
-floorTexture = pygame.image.load("pics/floor.png")
+moonTexture = pygame.image.load("pics/moon.png")
 
 
 #Materiales
@@ -40,6 +40,7 @@ stars = Material(texture = starsTexture,spec=64,ks=0.1)
 sky = Material(texture = skyTexture,spec=30,ks=0.1)
 sunset = Material(diffuse=sunsetTexture,spec=256,ks=0.2)
 
+moon = Material(texture = moonTexture,spec=64,ks=0.1,matType=REFLECTIVE)
 mirror = Material(diffuse=(0.9,0.9,0.9),spec=64,ks=0.2,matType=REFLECTIVE)
 blueMirror = Material(diffuse=(0.4,0.4,0.9),spec=32,ks=0.15,matType=REFLECTIVE)
 mirrorball = Material(texture = mirrorballTexture,spec=64,ks=0.1,matType=OPAQUE)
@@ -66,22 +67,22 @@ raytracer.scene.append(Triangle(vertices=[(2.5,1,-6),(0,3,-6),(1,0.7,-5)],materi
 raytracer.scene.append(Triangle(vertices=[(-4, -2, -6), (-2, 3, -6), (-1.9, -2, -5.5)], material=blueMirror))
 raytracer.scene.append(Triangle(vertices=[(4.6, -2, -6), (2, 3, -6), (2.1, -2, -5.5)], material=blueMirror))
 
+#triangle
 raytracer.scene.append(Triangle(vertices=[(-4, 1, -6), (-2, 3, -6), (-0.9, 0.7, -5)], material=mirror))
 raytracer.scene.append(Triangle(vertices=[(4.5, 1, -6), (2, 3, -6), (3.1, 0.7, -5)], material=mirror))
 
 #cylinde
 raytracer.scene.append(Cylinder(position=(-6, -1, -7), radius=1, height=2, material=blueMirror))
+#raytracer.scene.append(Cylinder(position=(-6, -1, -7), radius=1, height=2, material=blueMirror))
+
 
 #Cubos
-
 raytracer.scene.append(AABB(position=(1.2,0.7,-2),size=(0.47,0.47,0.47),material=blueMirror))
 raytracer.scene.append(AABB(position=(2,0.8,-3.2),size=(0.4,0.4,0.4),material=stars))
 raytracer.scene.append(AABB(position=(2,-0.5,-3.2),size=(0.3,0.3,0.3),material=sky))
 
 #sphere1
 raytracer.scene.append(Sphere(position=(2,-2.5,-7),radius=0.5,material=sky))
-
-#Sphere 2
 raytracer.scene.append(Sphere(position=(-2,1.5,-7),radius=0.5,material=glass))
 #sphere
 raytracer.scene.append(Sphere(position=(1,1.5,-7),radius=0.3,material=glass))
@@ -93,7 +94,7 @@ raytracer.scene.append(Sphere(position=(-6,1.5,-7),radius=1,material=mirror))
 raytracer.scene.append(Sphere(position=(-6,1.5,-7),radius=1,material=mirror))
 
 #Discos
-raytracer.scene.append(Disk(position=(0,0.5,-5),normal=(-1,0,0),radius=2,material=blueMirror))
+raytracer.scene.append(Disk(position=(0,0.5,-5),normal=(-1,0,0),radius=2,material=moon))
 
 raytracer.lights.append(AmbientLight(intensity=0.1))
 raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1),intensity=0.9))
