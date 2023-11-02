@@ -1,6 +1,7 @@
 
 import pygame
 from pygame.locals import *
+import glm
 
 from gl import Renderer
 from model import Model
@@ -18,11 +19,15 @@ rend = Renderer(screen)
 rend.setShaders(vertex_shader,fragment_shader)
 
             # POSITIONS,    COLORS
-triangle = [-0.5,-0.5,0,    1.0,0.0,0.0,
+triangleData = [-0.5,-0.5,0,    1.0,0.0,0.0,
                0,0.5,0,     0.0,1.0,0.0,
              0.5,-0.5,0,    0.0,0.0,1.0]
 
-rend.scene.append(Model(triangle))
+triangleModel = Model(triangleData)
+triangleModel.position.z = -5
+triangleModel.scale = glm.vec3(5,5,5)
+
+rend.scene.append(triangleModel)
 
 isRunning = True
 
