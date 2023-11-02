@@ -18,8 +18,35 @@ class Renderer(object):
         glViewport(0,0,self.width,self.height)
         
         self.scene = []
-
         self.activeShader = None
+
+        # ViewMatrix
+        self.camPosition = glm.vec3(0,0,0)
+        self.camRotation = glm.vec3(0,0,0)
+
+        #projection matrix
+        self.projectionMatrix = glm.
+
+    def getViewMatrix(self):
+        identity = glm.mat4(1)
+
+        translateMat = glm.translate(identity, self.camPosition)
+        #Rotation X - Pitch
+        #Rotation Y - Yaw
+        #Rotation Z - Roll
+
+        pitch = glm.rotate(identity, glm.radians(self.camRotation.x), glm.vec3(1,0,0))
+        yaw   = glm.rotate(identity, glm.radians(self.camRotation.y), glm.vec3(0,1,0))
+        roll  = glm.rotate(identity, glm.radians(self.camRotation.z), glm.vec3(0,0,1))
+
+        rotationMat = pitch * yaw * roll
+
+        camMatrix = translateMat * rotationMat
+
+        return glm.inverse(camMatrix)
+
+
+
     
     def setShaders(self,vertexShader,fragmentShader):
         if vertexShader is not None and fragmentShader is not None:
