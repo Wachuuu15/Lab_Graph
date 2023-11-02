@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 
 from gl import Renderer
-from buffer import Buffer
+from model import Model
 from shaders import *
 
 width = 960
