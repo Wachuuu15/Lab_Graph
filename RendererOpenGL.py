@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 
 from gl import Renderer
-from buffer import Buffer
+from model import Model
 from shaders import *
 
 width = 960
@@ -17,14 +17,15 @@ clock = pygame.time.Clock()
 rend = Renderer(screen)
 rend.setShaders(vertex_shader,fragment_shader)
 
-# POSITIONS, COLORS
-triangle = [-0.5,-0.5,0,1.0,0.0,0.0,
-            0,0.5,0,0.0,1.0,0.0,
-            0.5,-0.5,0,0.0,0.0,1.0]
+            # POSITIONS,    COLORS
+triangle = [-0.5,-0.5,0,    1.0,0.0,0.0,
+               0,0.5,0,     0.0,1.0,0.0,
+             0.5,-0.5,0,    0.0,0.0,1.0]
 
-rend.scene.append(Buffer(triangle))
+rend.scene.append(Model(triangle))
 
 isRunning = True
+
 while isRunning:
     deltaTime = clock.tick(60)/1000
     keys = pygame.key.get_pressed()

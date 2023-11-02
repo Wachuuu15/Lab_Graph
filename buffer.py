@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from numpy import array, float32
 
-class Buffer(object):
+class Model(object):
     def __init__(self,data):
         self.vertBuffer = array(data,dtype=float32)
         
