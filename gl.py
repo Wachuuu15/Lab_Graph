@@ -1,7 +1,7 @@
 #pip install PyGLM
 #Libreria de Matematicas compatible
 #con OpenGL
-#import glm
+import glm
 
 #pip install PyOpenGL
 from OpenGL.GL import *
@@ -61,16 +61,16 @@ class Renderer(object):
         if self.activeShader is not None:
             glUseProgram(self.activeShader)
 
-            glUniform1fMatrix4fv( glGetUniformLocation(self.activeShader, "viewMatrix"),
+            glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "viewMatrix"),
                                  1, GL_FALSE, glm.value_ptr(self.getViewMatrix()))
             
             
-            glUniform1fMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
+            glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
                                  1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
         
         for obj in self.scene:
             if self.activeShader is not None:
-                glUniform1fMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
+                glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
                                  1, GL_FALSE, glm.value_ptr(obj.getModelMatrix()))
 
             obj.render()

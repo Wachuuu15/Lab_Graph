@@ -14,7 +14,7 @@ class Model(object):
 
         self.position = glm.vec3(0,0,0)
         self.rotation = glm.vec3(0,0,0)
-        self.scale = glm.vec(1,1,1)
+        self.scale    = glm.vec3(1,1,1)
 
     def getModelMatrix(self):
         identity = glm.mat4(1)
