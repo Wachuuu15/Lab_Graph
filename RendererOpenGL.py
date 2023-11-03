@@ -32,7 +32,7 @@ for face in obj.faces:
             vertexID, texcoordID, normalID = vertexInfo
             vertex = obj.vertices[vertexID - 1]
             normals = obj.normals[normalID - 1]
-            uv = obj.texcoords[texcoordID - 1]
+            uv = obj.textcoords[texcoordID - 1]
             uv = [uv[0], uv[1]]
 
             objData.extend(vertex + uv + normals)
@@ -45,7 +45,7 @@ for face in obj.faces:
             vertexID, texcoordID, normalID = vertexInfo
             vertex = obj.vertices[vertexID - 1]
             normals = obj.normals[normalID - 1]
-            uv = obj.texcoords[texcoordID - 1]
+            uv = obj.textcoords[texcoordID - 1]
 
             uv = [uv[0], uv[1]]
 
@@ -58,7 +58,7 @@ for face in obj.faces:
             vertexID, texcoordID, normalID = vertexInfo
             vertex = obj.vertices[vertexID - 1]
             normals = obj.normals[normalID - 1]
-            uv = obj.texcoords[texcoordID - 1]
+            uv = obj.textcoords[texcoordID - 1]
             uv = [uv[0], uv[1]]
 
             objData.extend(vertex + uv + normals)
