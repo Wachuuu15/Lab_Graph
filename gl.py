@@ -16,6 +16,8 @@ class Renderer(object):
         
         glEnable(GL_DEPTH_TEST)
         glViewport(0,0,self.width,self.height)
+
+        self.elapsedTime = 0.0
         
         self.scene = []
         self.activeShader = None
@@ -67,6 +69,8 @@ class Renderer(object):
             
             glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
                                  1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
+            
+            glUniform1f( glGetUniformLocation(self.activeShader, "time"), self.elapsedTime)
         
         for obj in self.scene:
             if self.activeShader is not None:

@@ -11,11 +11,14 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+uniform float time;
+
 out vec4 outColor;
 
 void main()
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position,1.0);
+    
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * newPos;
     outColor = vec4(inColor,1.0);
 }
 '''
