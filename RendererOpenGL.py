@@ -18,16 +18,23 @@ clock = pygame.time.Clock()
 rend = Renderer(screen)
 rend.setShaders(vertex_shader,fragment_shader)
 
-                # POSITIONS,    COLORS
-triangleData = [-0.5,-0.5,0,    1.0,0.0,0.0,
-                0,0.5,0,        0.0,1.0,0.0,
-                0.5,-0.5,0,     0.0,0.0,1.0]
 
-triangleModel = Model(triangleData)
-triangleModel.position.z = -10
-triangleModel.scale = glm.vec3(5,5,5)
+modelo = Model(filename="obj/toonRocket.obj",translate=glm.vec3(0,-1,-5),rotation=glm.vec3(-90,0,0),scale=glm.vec3(1,1,1))
+modelo.loadTexture("texture/toonRocket.bmp")
 
-rend.scene.append(triangleModel)
+rend.scene.append(modelo)
+
+
+#                 # POSITIONS,    COLORS
+# triangleData = [-0.5,-0.5,0,    1.0,0.0,0.0,
+#                 0,0.5,0,        0.0,1.0,0.0,
+#                 0.5,-0.5,0,     0.0,0.0,1.0]
+
+# triangleModel = Model(triangleData)
+# triangleModel.position.z = -10
+# triangleModel.scale = glm.vec3(5,5,5)
+
+# rend.scene.append(triangleModel)
 
 isRunning = True
 
@@ -56,14 +63,11 @@ while isRunning:
 
         
     if keys[K_q]:
-        rend.camPosition.y += 5
+        rend.camPosition.y += 5 * deltaTime
 
     elif keys[K_e]:
-        rend.camPosition.y -= 5
+        rend.camPosition.y -= 5 * deltaTime 
 
-    triangleModel.rotation.y += 45*deltaTime
-
-    rend.elapsedTime += deltaTime
     
     rend.render()
     pygame.display.flip()

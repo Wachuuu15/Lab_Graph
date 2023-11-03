@@ -1,6 +1,9 @@
 from OpenGL.GL import *
 import glm 
 from numpy import array, float32
+from obj import Obj
+
+import pygame
 
 class Model(object):
     def __init__(self,data):
@@ -15,6 +18,17 @@ class Model(object):
         self.position = glm.vec3(0,0,0)
         self.rotation = glm.vec3(0,0,0)
         self.scale    = glm.vec3(1,1,1)
+
+        self.textureSurface = None
+        self.textureData = None
+        self.textureBuffer = None
+
+    
+    def loadTexture(self,textureName):
+        self.textureSurface = pygame.image.load(textureName)
+        self.textureData = pygame.image.tostring(self.textureSurface,"RGB",True)
+        self.textureBuffer = glGenTextures(1)
+        
 
     def getModelMatrix(self):
         identity = glm.mat4(1)
@@ -50,13 +64,41 @@ class Model(object):
         #Attribute Number,Size,Type,Is it normalized,Stride,Offset
 
         #Atributo de posiciones
-        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,4*6,ctypes.c_void_p(0))
+        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,4*8,ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
         
         #Atributo de colores
-        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,4*6,ctypes.c_void_p(4*3))
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,4*8,ctypes.c_void_p(4*3))
         glEnableVertexAttribArray(1)
+       
+        #Atributo de normales
+        glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,4*8,ctypes.c_void_p(4*5))
+        glEnableVertexAttribArray(2)
+      
+        #Activar la textura
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D,self.textureBuffer)
+        glTexImage2D(GL_TEXTURE_2D,                                 #Texture type
+                               0,                                   #Positions
+                               GL_RGB,                              #Interal Format
+                               self.textureSurface.get_width(),     #width
+                               self.textureSurface.get_height(),    #height
+                               0,                                   #Border
+                               GL_RGB,                              #Format
+                               GL_UNSIGNED_BYTE,                    #Type
+                               self.textureData)                    #Data
         
-        glDrawArrays(GL_TRIANGLES,0,int(len(self.vertBuffer)/6))
+        #glGenerateMipmap(GL_TEXTURE_2D)
+        glGenerateTextureMipmap(self.textureBuffer)
+
+        #Normals
+        glVertexAttribPointer(2, 
+                              3, 
+                              GL_FLOAT, 
+                              GL_FALSE, 
+                              4 * 8, 
+                              ctypes.c_void_p(4 * 5))
+
+        glDrawArrays(GL_TRIANGLES,0,int(len(self.vertBuffer)/8))
         
         

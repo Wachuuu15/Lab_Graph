@@ -1,6 +1,3 @@
-#pip install PyGLM
-#Libreria de Matematicas compatible
-#con OpenGL
 import glm
 
 #pip install PyOpenGL
@@ -21,6 +18,9 @@ class Renderer(object):
         
         self.scene = []
         self.activeShader = None
+
+        self.dirLight = glm.vec3(1,0,0)
+
 
         # ViewMatrix
         self.camPosition = glm.vec3(0,0,0)
@@ -74,7 +74,7 @@ class Renderer(object):
         
         for obj in self.scene:
             if self.activeShader is not None:
-                glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
+                glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "modelMatrix"),
                                  1, GL_FALSE, glm.value_ptr(obj.getModelMatrix()))
 
             obj.render()
