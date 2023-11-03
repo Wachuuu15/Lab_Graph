@@ -19,8 +19,8 @@ rend = Renderer(screen)
 rend.setShaders(vertex_shader,fragment_shader)
 
 
-modelo = Model(filename="obj/toonRocket.obj",translate=glm.vec3(0,-1,-5),rotation=glm.vec3(-90,0,0),scale=glm.vec3(1,1,1))
-modelo.loadTexture("texture/toonRocket.bmp")
+modelo = Model(filename="obj/12221_Cat_v1_l3.obj",translate=glm.vec3(0,-1,-5),rotation=glm.vec3(-90,0,0),scale=glm.vec3(1,1,1))
+modelo.loadTexture("texture/Cat_diffuse.jpg")
 
 rend.scene.append(modelo)
 
