@@ -15,6 +15,7 @@ vertex_shader = """
     uniform float time;
     
     out vec2 outTextcoords;
+    out vec3 outNormals;
     
     void main() {
         vec3 pos = position;
@@ -29,11 +30,14 @@ fragment_shader = """
     
     layout (binding = 0) uniform sampler2D tex;
     
+    uniform vec3 dirLight;
+
     in vec2 outTextcoords;
-    in vec3 normal;
+    in vec3 outNormals;
     out vec4 fragColor;
     
     void main() {
-        fragColor = texture(tex, outTextcoords);
+        float intensity = dot(outNormals, -dirLight);
+        fragColor = texture(tex, outTextcoords) * intensity;
     }
 """
