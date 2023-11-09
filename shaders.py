@@ -17,6 +17,8 @@ vertex_shader = """
     out vec2 outTextcoords;
     
     void main() {
+        vec3 pos = position;
+        pos.y += sin(time + pos.x/2)/2; 
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
         outTextcoords = texCoords;
     }
