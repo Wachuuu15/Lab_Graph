@@ -66,12 +66,23 @@ for face in obj.faces:
 
 model = Model(objData)
 
-modelo.loadTexture("texture/Cat_diffuse.jpg")
+model.loadTexture("texture/Cat_diffuse.jpg")
 
+
+# Ajustar la rotación para que el modelo mire hacia la cámara
+# El modelo inicialmente mira hacia abajo en el eje Y (-90 grados en Y)
+initial_rotation = glm.vec3(20, 0, 0)
+
+desired_rotation = glm.vec3(2, 2, -2)  # Rotación que hace que el modelo mire hacia la cámara
+model.rotation = desired_rotation
+
+# Configurar la posición y escala según sea necesario
 model.position.z = -6
 model.position.y = 0
-model.scale = glm.vec3(0.01, 0.01, 0.01)
-renderer.scene.append(model)
+model.scale = glm.vec3(0.05, 0.05, 0.05)
+
+
+rend.scene.append(model)
 
 
 
