@@ -18,10 +18,9 @@ vertex_shader = """
     out vec3 outNormals;
     
     void main() {
-        vec3 pos = position;
-        pos.y += sin(time + pos.x/2)/2; 
-        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position,1.0);
         outTextcoords = texCoords;
+
     }
 """
 
@@ -35,9 +34,10 @@ fragment_shader = """
     in vec2 outTextcoords;
     in vec3 outNormals;
     out vec4 fragColor;
-    
+   
     void main() {
-        float intensity = dot(outNormals, -dirLight);
-        fragColor = texture(tex, outTextcoords) * intensity;
-    }
+    float intensity = dot(outNormals, -dirLight);
+    fragColor = texture(tex, outTextcoords) * intensity;
+}
+
 """
