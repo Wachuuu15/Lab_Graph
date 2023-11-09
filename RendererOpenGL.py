@@ -98,6 +98,9 @@ while isRunning:
         elif event.type==pygame.KEYDOWN:
             if event.key==pygame.K_ESCAPE:
                 isRunning = False
+
+            if event.key == pygame.K_ESCAPE:
+                rend.toogleFiledMode()
     
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime 
