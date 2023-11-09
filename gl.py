@@ -17,7 +17,7 @@ class Renderer(object):
 
         self.elapsedTime = 0.0
         self.target = glm.vec3(0,0,0)
-
+        self.dirLight = glm.vec3(1,0,0)
 
         self.filledMode = True
         
@@ -95,7 +95,9 @@ class Renderer(object):
             
             glUniform1f( glGetUniformLocation(self.activeShader, "time"), self.elapsedTime)
 
-            
+            glUniform3fv( glGetUniformLocation(self.activeShader,"dirLight"), 1,glm.value_ptr(self.dirLight))
+
+
         
         for obj in self.scene:
             if self.activeShader is not None:
