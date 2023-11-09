@@ -94,6 +94,8 @@ class Renderer(object):
                                  1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
             
             glUniform1f( glGetUniformLocation(self.activeShader, "time"), self.elapsedTime)
+
+            
         
         for obj in self.scene:
             if self.activeShader is not None:

@@ -11,14 +11,14 @@ vertex_shader = """
     uniform mat4 modelMatrix;
     uniform mat4 viewMatrix;
     uniform mat4 projectionMatrix;
+
+    uniform float time;
     
-    out vec2 UVs;
-    out vec3 normal;
+    out vec2 outTextcoords;
     
     void main() {
-        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
-        UVs = texCoords;
-        normal = (modelMatrix * vec4(normals, 0.0)).xyz;
+        gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+        outTextcoords = texCoords;
     }
 """
 
@@ -27,11 +27,11 @@ fragment_shader = """
     
     layout (binding = 0) uniform sampler2D tex;
     
-    in vec2 UVs;
+    in vec2 outTextcoords;
     in vec3 normal;
     out vec4 fragColor;
     
     void main() {
-        fragColor = texture(tex, UVs);
+        fragColor = texture(tex, outTextcoords);
     }
 """
