@@ -69,7 +69,6 @@ model = Model(objData)
 model.loadTexture("texture/Cat_diffuse.jpg")
 
 
-# Ajustar la rotación para que el modelo mire hacia la cámara
 # El modelo inicialmente mira hacia abajo en el eje Y (-90 grados en Y)
 initial_rotation = glm.vec3(20, 0, 0)
 
@@ -83,6 +82,7 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
 rend.scene.append(model)
+rend.target = model.position
 
 
 
@@ -133,6 +133,7 @@ while isRunning:
         rend.camPosition.y -= 5 * deltaTime 
 
     
+    rend.update()
     rend.render()
     pygame.display.flip()
     

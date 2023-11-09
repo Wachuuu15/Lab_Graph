@@ -16,6 +16,8 @@ class Renderer(object):
         glViewport(0,0,self.width,self.height)
 
         self.elapsedTime = 0.0
+        self.target = glm.vec3(0,0,0)
+
 
         self.filledMode = True
         
@@ -28,6 +30,7 @@ class Renderer(object):
         # ViewMatrix
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0)
+        self.viewMatrix =  self.getViewMatrix()
 
         #projection matrix
         self.projectionMatrix = glm.perspective(glm.radians(60), #FOV
@@ -42,6 +45,7 @@ class Renderer(object):
         if self.filledMode:
             glPolygonMode(GL_FRONT, GL_FILL)
         else:
+            glDisable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
 
@@ -68,6 +72,12 @@ class Renderer(object):
             self.activeShader = compileProgram(compileShader(vertexShader,GL_VERTEX_SHADER),compileShader(fragmentShader,GL_FRAGMENT_SHADER))
         else:
             self.activeShader = None
+
+    def update(self):
+        #self.viewMatrix = self.getViewMatrix()
+
+        self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
+
         
     def render(self):
         glClearColor(self.clearColor[0],self.clearColor[1],self.clearColor[2],1)
@@ -77,7 +87,7 @@ class Renderer(object):
             glUseProgram(self.activeShader)
 
             glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "viewMatrix"),
-                                 1, GL_FALSE, glm.value_ptr(self.getViewMatrix()))
+                                 1, GL_FALSE, glm.value_ptr(self.viewMatrix))
             
             
             glUniformMatrix4fv( glGetUniformLocation(self.activeShader, "projectionMatrix"),
