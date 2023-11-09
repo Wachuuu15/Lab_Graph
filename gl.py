@@ -12,9 +12,12 @@ class Renderer(object):
         self.clearColor = [0,0,0]
         
         glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
         glViewport(0,0,self.width,self.height)
 
         self.elapsedTime = 0.0
+
+        self.filledMode = True
         
         self.scene = []
         self.activeShader = None
@@ -31,6 +34,16 @@ class Renderer(object):
                                                 self.width/self.height,
                                                 0.1,
                                                 1000)
+        
+    #modo de relleno
+    def toogleFiledMode(self):
+        self.filledMode = not self.filledMode
+
+        if self.filledMode:
+            glPolygonMode(GL_FRONT, GL_FILL)
+        else:
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+
 
     def getViewMatrix(self):
         identity = glm.mat4(1)
