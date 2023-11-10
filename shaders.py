@@ -24,6 +24,32 @@ vertex_shader = """
     }
 """
 
+fat_vertex_shader = '''
+#version 450 core
+layout (location=0) in vec3 position;
+layout (location=1) in vec2 texCoords;
+layout (location=2) in vec3 normals;
+
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+uniform float fatness;
+
+out vec2 outTextcoords;
+out vec3 outNormals;
+
+void main()
+{
+    outNormals  =(modelMatrix*vec4(normals,0.0)).xyz;
+    outNormals = normalize(outNormals);
+    vec3 pos = position+(fatness/4)*outNormals;
+    
+    gl_Position = projectionMatrix*viewMatrix*modelMatrix*vec4(pos,1.0);
+    outTextcoords = texCoords;
+}
+'''
+
 fragment_shader = """
     #version 450 core
     

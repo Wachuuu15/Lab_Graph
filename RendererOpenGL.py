@@ -125,12 +125,17 @@ while isRunning:
     elif keys[K_s]:
         rend.camPosition.z -= 5 * deltaTime
 
-        
     if keys[K_q]:
         rend.camPosition.y += 5 * deltaTime
 
     elif keys[K_e]:
         rend.camPosition.y -= 5 * deltaTime 
+
+    if keys[K_UP]:
+        if rend.fatness<1.0:
+            rend.fatness += 1 * deltaTime
+    elif keys[K_DOWN]>0.0:
+        rend.fatness -= 1 *deltaTime
 
     
     rend.update()

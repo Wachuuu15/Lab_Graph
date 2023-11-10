@@ -19,6 +19,7 @@ class Renderer(object):
         self.target = glm.vec3(0,0,0)
         self.dirLight = glm.vec3(1,0,0)
 
+        self.fatness = 0.0
         self.filledMode = True
         
         self.scene = []
@@ -95,9 +96,9 @@ class Renderer(object):
             
             glUniform1f( glGetUniformLocation(self.activeShader, "time"), self.elapsedTime)
 
+            glUniform1f( glGetUniformLocation(self.activeShader, "fatness"), self.fatness)
+
             glUniform3fv( glGetUniformLocation(self.activeShader,"dirLight"), 1,glm.value_ptr(self.dirLight))
-
-
         
         for obj in self.scene:
             if self.activeShader is not None:
