@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((width,height),pygame.OPENGL|pygame.DOUBLEBUF)
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
-rend.setShaders(vertex_shader,fragment_shader)
+rend.setShaders(vertex_shader,toon_shader)
 
 
 obj = Obj(filename="obj/12221_Cat_v1_l3.obj")
@@ -76,8 +76,9 @@ desired_rotation = glm.vec3(2, 2, -2)  # Rotación que hace que el modelo mire h
 model.rotation = desired_rotation
 
 # Configurar la posición y escala según sea necesario
-model.position.z = -6
+
 model.position.y = 0
+model.position.z = -6
 model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
@@ -110,8 +111,10 @@ while isRunning:
             if event.key==pygame.K_ESCAPE:
                 isRunning = False
 
-            if event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_SPACE:
                 rend.toogleFiledMode()
+
+
     
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime 

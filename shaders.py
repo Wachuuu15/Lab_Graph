@@ -20,6 +20,7 @@ vertex_shader = """
     void main() {
         gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position,1.0);
         outTextcoords = texCoords;
+        outNormals = (modelMatrix * vec4(normals, 0.0)).xyz;
 
     }
 """
@@ -49,6 +50,7 @@ void main()
     outTextcoords = texCoords;
 }
 """
+
 toon_shader = """
 #version 450 core
 
@@ -88,7 +90,7 @@ fragment_shader = """
    
     void main() {
     float intensity = dot(outNormals, -dirLight);
-    fragColor = texture(tex, outTextcoords) * intensity;
+    fragColor = texture(tex, outTextcoords) * (intensity*3);
 }
 
 """

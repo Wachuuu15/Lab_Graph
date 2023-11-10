@@ -3,6 +3,8 @@ import glm
 #pip install PyOpenGL
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
+from typing import Self
+
 
 class Renderer(object):
     def __init__(self,screen):
@@ -44,7 +46,9 @@ class Renderer(object):
         self.filledMode = not self.filledMode
 
         if self.filledMode:
+            glEnable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT, GL_FILL)
+
         else:
             glDisable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
@@ -75,9 +79,9 @@ class Renderer(object):
             self.activeShader = None
 
     def update(self):
-        #self.viewMatrix = self.getViewMatrix()
+        self.viewMatrix = self.getViewMatrix()
 
-        self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
+        #self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
 
         
     def render(self):
