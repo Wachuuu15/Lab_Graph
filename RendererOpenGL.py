@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((width,height),pygame.OPENGL|pygame.DOUBLEBUF)
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
-rend.setShaders(vertex_shader,toon_shader)
+rend.setShaders(vertex_shader,fragment_shader)
 
 
 obj = Obj(filename="obj/12221_Cat_v1_l3.obj")
@@ -69,22 +69,20 @@ model = Model(objData)
 model.loadTexture("texture/Cat_diffuse.jpg")
 
 
-# El modelo inicialmente mira hacia abajo en el eje Y (-90 grados en Y)
-initial_rotation = glm.vec3(20, 0, 0)
-
-desired_rotation = glm.vec3(2, 2, -2)  # Rotación que hace que el modelo mire hacia la cámara
-model.rotation = desired_rotation
-
-# Configurar la posición y escala según sea necesario
+model.rotation.y = 120
+model.rotation.x = 100
 
 model.position.y = 0
 model.position.z = -6
+model.position.x = 0
+
 model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
 rend.scene.append(model)
 rend.target = model.position
-
+renderer.lightIntensity = 0.8
+renderer.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
 
 #                 # POSITIONS,    COLORS
@@ -108,12 +106,32 @@ while isRunning:
             isRunning = False
             
         elif event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_ESCAPE:
+            if event.key==pygame.K_SPACE:
                 isRunning = False
 
-            if event.key == pygame.K_SPACE:
-                rend.toogleFiledMode()
+            elif event.key == pygame.K_1:
+                print("1")
+                rend.setShaders(vertex_shader, fragment_shader)
 
+            elif event.key == pygame.K_2:
+                print("2")
+                rend.setShaders(vertex_shader, resalt_shader)
+
+            elif event.key == pygame.K_3:
+                print("3")
+                rend.setShaders(vertex_shader, manchas_shader)
+
+            elif event.key == pygame.K_4:
+                print("4")
+                rend.setShaders(vertex_shader, stars_shader)
+
+obj.rotation.y += 45 * deltaTime
+
+    if keys[K_RIGHT]:
+        obj.rotation.y += 45 * deltaTime 
+
+    elif keys[K_LEFT]:
+        obj.rotation.y -= 135 * deltaTime #135 con rotacion constante
 
     
     if keys[K_d]:
