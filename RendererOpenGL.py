@@ -69,8 +69,7 @@ model = Model(objData)
 model.loadTexture("texture/Cat_diffuse.jpg")
 
 
-model.rotation.y = 120
-model.rotation.x = 100
+#model.rotation.y = -40
 
 model.position.y = 0
 model.position.z = -6
@@ -120,13 +119,16 @@ while isRunning:
             elif event.key == pygame.K_4:
                 print("4")
                 rend.setShaders(vertex_shader, stars_shader)
+            elif event.key == pygame.K_5:
+                print("5")
+                rend.setShaders(vertex_shader, fire_shader)
 
-    obj.rotation.y += 45 * deltaTime
+    #obj.rotation.y += 45 * deltaTime
 
-    if keys[K_RIGHT]:
-        obj.rotation.y += 45 * deltaTime 
-    elif keys[K_LEFT]:
-        obj.rotation.y -= 135 * deltaTime  # 135 con rotación constante
+    #if keys[K_RIGHT]:
+    #    obj.rotation.y += 45 * deltaTime 
+    #elif keys[K_LEFT]:
+    #    obj.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime 
