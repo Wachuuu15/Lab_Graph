@@ -81,8 +81,8 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 rend.scene.append(model)
 rend.target = model.position
-renderer.lightIntensity = 0.8
-renderer.dirLight = glm.vec3(0.0, 0.0, -1.0)
+rend.lightIntensity = 0.8
+rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
 
 #                 # POSITIONS,    COLORS
@@ -101,38 +101,32 @@ isRunning = True
 while isRunning:
     deltaTime = clock.tick(60)/1000
     keys = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type==pygame.QUIT:
-            isRunning = False
-            
-        elif event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_SPACE:
-                isRunning = False
 
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            isRunning = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                isRunning = False
             elif event.key == pygame.K_1:
                 print("1")
                 rend.setShaders(vertex_shader, fragment_shader)
-
             elif event.key == pygame.K_2:
                 print("2")
                 rend.setShaders(vertex_shader, resalt_shader)
-
             elif event.key == pygame.K_3:
                 print("3")
                 rend.setShaders(vertex_shader, manchas_shader)
-
             elif event.key == pygame.K_4:
                 print("4")
                 rend.setShaders(vertex_shader, stars_shader)
 
-obj.rotation.y += 45 * deltaTime
+    obj.rotation.y += 45 * deltaTime
 
     if keys[K_RIGHT]:
         obj.rotation.y += 45 * deltaTime 
-
     elif keys[K_LEFT]:
-        obj.rotation.y -= 135 * deltaTime #135 con rotacion constante
-
+        obj.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime 
