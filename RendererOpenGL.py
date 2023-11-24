@@ -7,6 +7,8 @@ from gl import Renderer
 from model import Model
 from shaders import *
 from obj import Obj
+from math import pi,sin,cos
+
 
 width = 960
 height = 540
@@ -89,6 +91,7 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 rend.scene.append(model)
 rend.camAngle = 0.0
+rend.camRadio = abs(model.translate.z)
 rend.target = model.position
 rend.lightIntensity = 0.8
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
@@ -133,14 +136,28 @@ while isRunning:
                 print("5")
                 rend.setShaders(vertex_shader, fire_shader)
 
-    model.rotation.y += 45 * deltaTime
+    # model.rotation.y += 45 * deltaTime
 
-    if keys[K_RIGHT]:
-        model.rotation.y += 45 * deltaTime 
-    elif keys[K_LEFT]:
-        model.rotation.y -= 135 * deltaTime  # 135 con rotación constante
+    # if keys[K_RIGHT]:
+    #     model.rotation.y += 45 * deltaTime 
+    # elif keys[K_LEFT]:
+    #     model.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
+    if keys[K_RIGHT]: #Movimiento circular a la derecha [d]
+            if rend.camAngle==360:
+                rend.camAngle=0.0
+                
+            rend.camAngle += 1
+            rend.camPosition.x = rend.target.x+rend.camRadio*sin(rend.camAngle*pi/180)
+            rend.camPosition.z = rend.target.z+rend.camRadio*cos(rend.camAngle*pi/180)
 
+    elif keys[K_LEFT]: #Movimiento circular a la izquierda [a]
+            if rend.camAngle==-360:
+                rend.camAngle=0.0
+                
+            rend.camAngle -= 1
+            rend.camPosition.x = rend.target.x+rend.camRadio*sin(rend.camAngle*pi/180)
+            rend.camPosition.z = rend.target.z+rend.camRadio*cos(rend.camAngle*pi/180)
     #Right al objeto [d]
 
     if keys[K_d]:
