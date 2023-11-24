@@ -135,6 +135,7 @@ class Renderer(object):
     def renderSkybox(self):
         if self.skyboxShader == None:
             return 
+        glDepthMask(GL_FALSE)
         
         glUseProgram(self.skyboxShader)
 
@@ -158,6 +159,8 @@ class Renderer(object):
         glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
 
         glDrawArrays(GL_TRIANGLES, 0, 36)
+
+        glDepthMask(GL_TRUE)
 
 
     def getViewMatrix(self):
