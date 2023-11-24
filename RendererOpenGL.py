@@ -10,7 +10,7 @@ from math import pi,sin,cos
 
 
 width = 960
-height = 540
+height = 540    
 
 pygame.init()
 
@@ -144,7 +144,7 @@ while isRunning:
     if keys[K_RIGHT]:
         rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 
-    # Rotar cámara a la izquierda
+    # Rotar cámara a la izquierda 
     elif keys[K_LEFT]:
         rend.camRotation += 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 

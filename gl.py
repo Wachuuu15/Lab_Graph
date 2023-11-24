@@ -5,7 +5,7 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
 from typing import Self
-from numpy import array, float32, sin, cos
+from numpy import array, float32
 
 
 class Renderer(object):
@@ -142,7 +142,7 @@ class Renderer(object):
         skyboxVM = glm.mat4(glm.mat3(self.viewMatrix))
 
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "viewMatrix"),
-                            1, GL_FALSE, glm.value_ptr(skyboxVM))
+                            1, GL_FALSE, glm.value_ptr(self.skyboxVM))
             
             
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "projectionMatrix"),
@@ -177,22 +177,11 @@ class Renderer(object):
         yaw   = glm.rotate(identity, glm.radians(self.camRotation.y), glm.vec3(0,1,0))
         roll  = glm.rotate(identity, glm.radians(self.camRotation.z), glm.vec3(0,0,1))
 
-
-        radius = 10  # ajusta el radio según sea necesario
-        camX = sin(glm.radians(self.camRotation.y)) * radius
-        camZ = cos(glm.radians(self.camRotation.y)) * radius
-
-        
-        self.camPosition.x = camX
-        self.camPosition.z = camZ
-
-
         rotationMat = pitch * yaw * roll
 
         camMatrix = translateMat * rotationMat
 
-        #return glm.inverse(camMatrix)
-        return glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+        return glm.inverse(camMatrix)
     
     def setShaders(self,vertexShader,fragmentShader):
         if vertexShader is not None and fragmentShader is not None:
@@ -203,7 +192,7 @@ class Renderer(object):
     def update(self):
         self.viewMatrix = self.getViewMatrix()
 
-        #return glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+        #self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
 
         
     def render(self):
