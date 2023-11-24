@@ -88,6 +88,7 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
 rend.scene.append(model)
+rend.camAngle = 0.0
 rend.target = model.position
 rend.lightIntensity = 0.8
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
@@ -132,28 +133,35 @@ while isRunning:
                 print("5")
                 rend.setShaders(vertex_shader, fire_shader)
 
-    #obj.rotation.y += 45 * deltaTime
+    model.rotation.y += 45 * deltaTime
 
-    #if keys[K_RIGHT]:
-    #    obj.rotation.y += 45 * deltaTime 
-    #elif keys[K_LEFT]:
-    #    obj.rotation.y -= 135 * deltaTime  # 135 con rotación constante
+    if keys[K_RIGHT]:
+        model.rotation.y += 45 * deltaTime 
+    elif keys[K_LEFT]:
+        model.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
+
+    #Right al objeto [d]
+
     if keys[K_d]:
         rend.camPosition.x += 5 * deltaTime 
+
+    # #left al objeto [a]
 
     elif keys[K_a]:
         rend.camPosition.x -= 5 * deltaTime
 
+    # #ZoomIn al objeto [w]
     if keys[K_w]:
         rend.camPosition.z += 5* deltaTime
-
+    #ZoomOut al objeto [s]
     elif keys[K_s]:
         rend.camPosition.z -= 5 * deltaTime
 
+    #Movimiento de camara hacia arriba [q]
     if keys[K_q]:
         rend.camPosition.y += 5 * deltaTime
-
+     #Movimiento de camara hacia abajo [e]
     elif keys[K_e]:
         rend.camPosition.y -= 5 * deltaTime 
 
