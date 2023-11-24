@@ -178,21 +178,11 @@ class Renderer(object):
         roll  = glm.rotate(identity, glm.radians(self.camRotation.z), glm.vec3(0,0,1))
 
 
-        radius = 10  # ajusta el radio según sea necesario
-        camX = sin(glm.radians(self.camRotation.y)) * radius
-        camZ = cos(glm.radians(self.camRotation.y)) * radius
-
-        
-        self.camPosition.x = camX
-        self.camPosition.z = camZ
-
-
         rotationMat = pitch * yaw * roll
 
         camMatrix = translateMat * rotationMat
 
-        #return glm.inverse(camMatrix)
-        return glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+        return glm.inverse(camMatrix)
     
     def setShaders(self,vertexShader,fragmentShader):
         if vertexShader is not None and fragmentShader is not None:
@@ -201,9 +191,8 @@ class Renderer(object):
             self.activeShader = None
 
     def update(self):
-        self.viewMatrix = self.getViewMatrix()
-
-        #return glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+        self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+    
 
         
     def render(self):
