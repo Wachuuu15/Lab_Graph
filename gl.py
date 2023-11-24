@@ -139,8 +139,10 @@ class Renderer(object):
         
         glUseProgram(self.skyboxShader)
 
+        skyboxVM = glm.mat4(glm.mat3(self.viewMatrix))
+
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "viewMatrix"),
-                            1, GL_FALSE, glm.value_ptr(self.viewMatrix))
+                            1, GL_FALSE, glm.value_ptr(skyboxVM))
             
             
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "projectionMatrix"),
