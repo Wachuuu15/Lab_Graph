@@ -5,7 +5,7 @@ import pygame
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
 from typing import Self
-from numpy import array, float32
+from numpy import array, float32, sin, cos
 
 
 class Renderer(object):
@@ -142,7 +142,7 @@ class Renderer(object):
         skyboxVM = glm.mat4(glm.mat3(self.viewMatrix))
 
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "viewMatrix"),
-                            1, GL_FALSE, glm.value_ptr(self.skyboxVM))
+                            1, GL_FALSE, glm.value_ptr(skyboxVM))
             
             
         glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "projectionMatrix"),
@@ -177,6 +177,7 @@ class Renderer(object):
         yaw   = glm.rotate(identity, glm.radians(self.camRotation.y), glm.vec3(0,1,0))
         roll  = glm.rotate(identity, glm.radians(self.camRotation.z), glm.vec3(0,0,1))
 
+
         rotationMat = pitch * yaw * roll
 
         camMatrix = translateMat * rotationMat
@@ -190,9 +191,8 @@ class Renderer(object):
             self.activeShader = None
 
     def update(self):
-        self.viewMatrix = self.getViewMatrix()
-
-        #self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0,1,0))
+        self.viewMatrix = glm.lookAt(self.camPosition, self.target, glm.vec3(0, 1, 0))
+    
 
         
     def render(self):

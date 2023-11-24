@@ -115,6 +115,7 @@ while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 isRunning = False
@@ -134,12 +135,6 @@ while isRunning:
                 print("5")
                 rend.setShaders(vertex_shader, fire_shader)
 
-    # model.rotation.y += 45 * deltaTime
-
-    # if keys[K_RIGHT]:
-    #     model.rotation.y += 45 * deltaTime 
-    # elif keys[K_LEFT]:
-    #     model.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
     if keys[K_RIGHT]:
         rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
