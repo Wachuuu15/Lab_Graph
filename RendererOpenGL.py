@@ -1,4 +1,3 @@
-
 import pygame
 from pygame.locals import *
 import glm
@@ -90,8 +89,7 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
 rend.scene.append(model)
-rend.camAngle = 0.0
-rend.camRadio = abs(model.translate.z)
+#rend.camRotation = 0.0
 rend.target = model.position
 rend.lightIntensity = 0.8
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
@@ -143,21 +141,13 @@ while isRunning:
     # elif keys[K_LEFT]:
     #     model.rotation.y -= 135 * deltaTime  # 135 con rotación constante
     
-    if keys[K_RIGHT]: #Movimiento circular a la derecha [d]
-            if rend.camAngle==360:
-                rend.camAngle=0.0
-                
-            rend.camAngle += 1
-            rend.camPosition.x = rend.target.x+rend.camRadio*sin(rend.camAngle*pi/180)
-            rend.camPosition.z = rend.target.z+rend.camRadio*cos(rend.camAngle*pi/180)
+    if keys[K_RIGHT]:
+        rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 
-    elif keys[K_LEFT]: #Movimiento circular a la izquierda [a]
-            if rend.camAngle==-360:
-                rend.camAngle=0.0
-                
-            rend.camAngle -= 1
-            rend.camPosition.x = rend.target.x+rend.camRadio*sin(rend.camAngle*pi/180)
-            rend.camPosition.z = rend.target.z+rend.camRadio*cos(rend.camAngle*pi/180)
+    # Rotar cámara a la izquierda
+    elif keys[K_LEFT]:
+        rend.camRotation += 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
+
     #Right al objeto [d]
 
     if keys[K_d]:

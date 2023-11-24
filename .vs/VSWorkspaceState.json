@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\skybox"
   ],
   "SelectedNode": "\\shaders.py",
   "PreviewInSolutionExplorer": false
