@@ -4,6 +4,7 @@ import glm
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
 from typing import Self
+from numpy import array, float32
 
 
 class Renderer(object):
