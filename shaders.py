@@ -205,3 +205,29 @@ fragment_shader = """
 }
 
 """
+skybox_vertex_shader = """
+#version 450 core
+layout( location = 0) in vec3 inPosition;
+
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
+void main()
+{
+    gl_Position = projectionMatrix  * viewMatrix * vec4(inPosition,1.0);
+}
+
+"""
+
+skybox_fragment_shader = """
+
+#version 450
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(1,1,1,1);
+}
+
+"""

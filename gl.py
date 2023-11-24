@@ -26,6 +26,7 @@ class Renderer(object):
         
         self.scene = []
         self.activeShader = None
+        self.skyboxShader = None
 
         self.dirLight = glm.vec3(1,0,0)
 
@@ -52,6 +53,82 @@ class Renderer(object):
         else:
             glDisable(GL_CULL_FACE)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+
+    def createSkybox(self, textureList, vertexShader, fragmentShader):
+        skyboxBuffer = [
+                            -1.0,  1.0, -1.0,
+                            -1.0, -1.0, -1.0,
+                            1.0, -1.0, -1.0,
+                            1.0, -1.0, -1.0,
+                            1.0,  1.0, -1.0,
+                            -1.0,  1.0, -1.0,
+
+                            -1.0, -1.0,  1.0,
+                            -1.0, -1.0, -1.0,
+                            -1.0,  1.0, -1.0,
+                            -1.0,  1.0, -1.0,
+                            -1.0,  1.0,  1.0,
+                            -1.0, -1.0,  1.0,
+
+                            1.0, -1.0, -1.0,
+                            1.0, -1.0,  1.0,
+                            1.0,  1.0,  1.0,
+                            1.0,  1.0,  1.0,
+                            1.0,  1.0, -1.0,
+                            1.0, -1.0, -1.0,
+
+                            -1.0, -1.0,  1.0,
+                            -1.0,  1.0,  1.0,
+                            1.0,  1.0,  1.0,
+                            1.0,  1.0,  1.0,
+                            1.0, -1.0,  1.0,
+                            -1.0, -1.0,  1.0,
+
+                            -1.0,  1.0, -1.0,
+                            1.0,  1.0, -1.0,
+                            1.0,  1.0,  1.0,
+                            1.0,  1.0,  1.0,
+                            -1.0,  1.0,  1.0,
+                            -1.0,  1.0, -1.0,
+
+                            -1.0, -1.0, -1.0,
+                            -1.0, -1.0,  1.0,
+                            1.0, -1.0, -1.0,
+                            1.0, -1.0, -1.0,
+                            -1.0, -1.0,  1.0,
+                            1.0, -1.0,  1.0
+                        ]
+        
+        self.skyboxVertBuffer = array(skyboxBuffer, dtype = float32)
+        self.skyboxVBO = glGenBuffers(1)
+        self.skyboxVAO = glGenVertexArrays(1)
+
+        self.skyboxShader =  compileProgram(compileShader(vertexShader,GL_VERTEX_SHADER),compileShader(fragmentShader,GL_FRAGMENT_SHADER))
+
+    def renderSkybox(self):
+        if self.skyboxShader == None:
+            return 
+        
+        glUseProgram(self.skyboxShader)
+
+        glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "viewMatrix"),
+                            1, GL_FALSE, glm.value_ptr(self.viewMatrix))
+            
+            
+        glUniformMatrix4fv( glGetUniformLocation(self.skyboxShader, "projectionMatrix"),
+                            1, GL_FALSE, glm.value_ptr(self.projectionMatrix))
+
+
+        glBindBuffer(GL_ARRAY_BUFFER, self.skyboxVBO)
+        glBindVertexArray(self.skyboxVAO)
+
+
+        glBufferData(GL_ARRAY_BUFFER,self.skyboxVertBuffer.nbytes,self.skyboxVertBuffer,GL_STATIC_DRAW)
+
+        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,4*3,ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+
+        glDrawArrays(GL_TRIANGLES, 0, 36)
 
 
     def getViewMatrix(self):
@@ -88,6 +165,8 @@ class Renderer(object):
         glClearColor(self.clearColor[0],self.clearColor[1],self.clearColor[2],1)
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
         
+        self.renderSkybox()
+
         if self.activeShader is not None:
             glUseProgram(self.activeShader)
 

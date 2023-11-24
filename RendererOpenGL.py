@@ -17,6 +17,15 @@ screen = pygame.display.set_mode((width,height),pygame.OPENGL|pygame.DOUBLEBUF)
 clock = pygame.time.Clock()
 
 rend = Renderer(screen)
+skyboxTextures = ["skybox/right.png",
+                  "skybox/left.png",
+                  "skybox/top.png",
+                  "skybox/bottom.png",
+                  "skybox/front_img.png",
+                  "skybox/back.png"]
+
+rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
+
 rend.setShaders(vertex_shader,fragment_shader)
 
 
