@@ -1,5 +1,6 @@
 import glm
 
+import pygame
 #pip install PyOpenGL
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileProgram,compileShader
@@ -108,20 +109,20 @@ class Renderer(object):
 
         self.skyboxTexture = glGenTextures(1)
         glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
-
+        
         for i in range(len(textureList)):
             texture = pygame.image.load(textureList[i])
-            textureData =  pygame.image.tostring(texture, "RGB", True)
-
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,                                 #Texture type
-                                0,                                   #Positions
-                                GL_RGB,                              #Interal Format
-                                texture.get_width(),                 #width
-                                texture.get_height(),                #height
-                                0,                                   #Border
-                                GL_RGB,                              #Format
-                                GL_UNSIGNED_BYTE,                    #Type
-                                textureData)                         #Data
+            textureData = pygame.image.tostring(texture,"RGB",False)
+            
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i,                       #Texture type
+                               0,                                   #Positions
+                               GL_RGB,                              #Interal Format
+                               texture.get_width(),     #width
+                               texture.get_height(),    #height
+                               0,                                   #Border
+                               GL_RGB,                              #Format
+                               GL_UNSIGNED_BYTE,                    #Type
+                               textureData) 
         
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)

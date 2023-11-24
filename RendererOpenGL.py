@@ -21,7 +21,7 @@ skyboxTextures = ["skybox/right.png",
                   "skybox/left.png",
                   "skybox/top.png",
                   "skybox/bottom.png",
-                  "skybox/front_img.png",
+                  "skybox/front.png",
                   "skybox/back.png"]
 
 rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
