@@ -106,6 +106,31 @@ class Renderer(object):
 
         self.skyboxShader =  compileProgram(compileShader(vertexShader,GL_VERTEX_SHADER),compileShader(fragmentShader,GL_FRAGMENT_SHADER))
 
+        self.skyboxTexture = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
+
+        for i in range(len(textureList)):
+            texture = pygame.image.load(textureList[i])
+            textureData =  pygame.image.tostring(texture, "RGB", True)
+
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,                                 #Texture type
+                                0,                                   #Positions
+                                GL_RGB,                              #Interal Format
+                                texture.get_width(),                 #width
+                                texture.get_height(),                #height
+                                0,                                   #Border
+                                GL_RGB,                              #Format
+                                GL_UNSIGNED_BYTE,                    #Type
+                                textureData)                         #Data
+        
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)
+
+
+
     def renderSkybox(self):
         if self.skyboxShader == None:
             return 
@@ -128,6 +153,8 @@ class Renderer(object):
 
         glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,4*3,ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
+
+        glBindTexture(GL_TEXTURE_CUBE_MAP, self.skyboxTexture)
 
         glDrawArrays(GL_TRIANGLES, 0, 36)
 
