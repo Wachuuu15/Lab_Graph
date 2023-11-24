@@ -78,9 +78,6 @@ model = Model(objData)
 
 model.loadTexture("texture/Cat_diffuse.jpg")
 
-
-#model.rotation.y = -40
-
 model.position.y = 0
 model.position.z = -6
 model.position.x = 0
@@ -89,22 +86,9 @@ model.scale = glm.vec3(0.05, 0.05, 0.05)
 
 
 rend.scene.append(model)
-#rend.camRotation = 0.0
 rend.target = model.position
 rend.lightIntensity = 0.8
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
-
-
-#                 # POSITIONS,    COLORS
-# triangleData = [-0.5,-0.5,0,    1.0,0.0,0.0,
-#                 0,0.5,0,        0.0,1.0,0.0,
-#                 0.5,-0.5,0,     0.0,0.0,1.0]
-
-# triangleModel = Model(triangleData)
-# triangleModel.position.z = -10
-# triangleModel.scale = glm.vec3(5,5,5)
-
-# rend.scene.append(triangleModel)
 
 isRunning = True
 
@@ -134,14 +118,24 @@ while isRunning:
             elif event.key == pygame.K_5:
                 print("5")
                 rend.setShaders(vertex_shader, fire_shader)
+        
+        elif event.type == pygame.MOUSEMOTION:
+            if event.buttons[0] == 1:  # Botón izquierdo del mouse
+                # Mover la cámara en función del movimiento del mouse
+                rend.camPosition.x += event.rel[1] * 0.1 
+                rend.camPosition.y += event.rel[0] * 0.1
+
+            elif event.buttons[0] == 2:
+                rend.camPosition.z += event.rel[1] * 0.1 
+                rend.camPosition.z += event.rel[0] * 0.1
 
     
-    if keys[K_RIGHT]:
-        rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
+    # if keys[K_RIGHT]:
+    #     rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 
-    # Rotar cámara a la izquierda 
-    elif keys[K_LEFT]:
-        rend.camRotation += 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
+    # # Rotar cámara a la izquierda 
+    # elif keys[K_LEFT]:
+    #     rend.camRotation += 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 
     #Right al objeto [d]
 
