@@ -30,67 +30,68 @@ rend.createSkybox(skyboxTextures, skybox_vertex_shader, skybox_fragment_shader)
 rend.setShaders(vertex_shader,fragment_shader)
 
 
-obj = Obj(filename="obj/12221_Cat_v1_l3.obj")
-objData = []
+objects_info = [
+    {"obj_file": "obj/12221_Cat_v1_l3.obj", "textures": ["texture/Cat_diffuse.jpg"]},
+    {"obj_file": "obj/12961_White-Tailed_Deer_v1_l2.obj", "textures": ["texture/12961_White-TailedDeer_diffuse.jpg"]},
+    {"obj_file": "obj/12265_Fish_v1_L2.obj", "textures": ["texture/fish.jpg"]},
+    {"obj_file": "obj/10042_Sea_Turtle_V2_iterations-2.obj", "textures": ["texture/10042_Sea_Turtle_V1_Diffuse.jpg"]},
+]
 
-for face in obj.faces:
+# Lista para almacenar los objetos
+objects = []
 
-    if len(face) == 3:
+for obj_info in objects_info:
+    obj_file = obj_info["obj_file"]
+    textures = obj_info["textures"]
 
-        for vertexInfo in face:
+    obj = Obj(filename=obj_file)
+    objData = []
 
-            vertexID, texcoordID, normalID = vertexInfo
-            vertex = obj.vertices[vertexID - 1]
-            normals = obj.normals[normalID - 1]
-            uv = obj.textcoords[texcoordID - 1]
-            uv = [uv[0], uv[1]]
+    for face in obj.faces:
+        if len(face) == 3:
+            for vertexInfo in face:
+                vertexID, texcoordID, normalID = vertexInfo
+                vertex = obj.vertices[vertexID - 1]
+                normals = obj.normals[normalID - 1]
+                uv = obj.textcoords[texcoordID - 1]
+                uv = [uv[0], uv[1]]
+                objData.extend(vertex + uv + normals)
+        elif len(face) == 4:
+            for i in [0, 1, 2]:
+                vertexInfo = face[i]
+                vertexID, texcoordID, normalID = vertexInfo
+                vertex = obj.vertices[vertexID - 1]
+                normals = obj.normals[normalID - 1]
+                uv = obj.textcoords[texcoordID - 1]
+                uv = [uv[0], uv[1]]
+                objData.extend(vertex + uv + normals)
 
-            objData.extend(vertex + uv + normals)
+            for i in [0, 2, 3]:
+                vertexInfo = face[i]
+                vertexID, texcoordID, normalID = vertexInfo
+                vertex = obj.vertices[vertexID - 1]
+                normals = obj.normals[normalID - 1]
+                uv = obj.textcoords[texcoordID - 1]
+                uv = [uv[0], uv[1]]
+                objData.extend(vertex + uv + normals)
 
-    elif len(face) == 4:
+    model = Model(objData)
 
-        for i in [0, 1, 2]:
+    # Cargar texturas para el objeto actual
+    for i, texture_file in enumerate(textures):
+        model.loadTexture(texture_file, texture_unit=i)
 
-            vertexInfo = face[i]
-            vertexID, texcoordID, normalID = vertexInfo
-            vertex = obj.vertices[vertexID - 1]
-            normals = obj.normals[normalID - 1]
-            uv = obj.textcoords[texcoordID - 1]
+    objects.append(model)
 
-            uv = [uv[0], uv[1]]
+current_object_index = 0
 
-            objData.extend(vertex + uv + normals)
-
-        for i in [0, 2, 3]:
-
-            vertexInfo = face[i]
-
-            vertexID, texcoordID, normalID = vertexInfo
-            vertex = obj.vertices[vertexID - 1]
-            normals = obj.normals[normalID - 1]
-            uv = obj.textcoords[texcoordID - 1]
-            uv = [uv[0], uv[1]]
-
-            objData.extend(vertex + uv + normals)
-
-
-model = Model(objData)
-
-model.loadTexture("texture/Cat_diffuse.jpg")
-
-model.position.y = 0
-model.position.z = -6
-model.position.x = 0
-
-model.scale = glm.vec3(0.05, 0.05, 0.05)
-
-
-rend.scene.append(model)
-rend.target = model.position
+# Configuración del primer objeto
+current_object = objects[current_object_index]
+rend.scene.append(current_object)
+rend.target = current_object.position
 rend.lightIntensity = 0.8
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
-isRunning = True
 
 while isRunning:
     deltaTime = clock.tick(60)/1000
