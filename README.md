@@ -26,3 +26,8 @@ Utilice las teclas de flecha para rotar el modelo
 - Diferentes shders
 - Input de shaders
 - Se adiciono el skybox como fondo
+
+  #Resultado
+
+![Descripción de la imagen](https://github.com/Wachuuu15/Lab_Graph/blob/Project3/Screenshot%20(2744).png)
+
