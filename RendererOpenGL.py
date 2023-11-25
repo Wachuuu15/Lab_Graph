@@ -79,19 +79,21 @@ for obj_info in objects_info:
 
     # Cargar texturas para el objeto actual
     for i, texture_file in enumerate(textures):
-        model.loadTexture(texture_file, texture_unit=i)
+        model.loadTexture(texture_file)
 
     objects.append(model)
-
 current_object_index = 0
 
 # Configuración del primer objeto
 current_object = objects[current_object_index]
+
 rend.scene.append(current_object)
 rend.target = current_object.position
-rend.lightIntensity = 0.8
+rend.lightIntensity = 0.2
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
+
+isRunning = True
 
 while isRunning:
     deltaTime = clock.tick(60)/1000
@@ -100,25 +102,38 @@ while isRunning:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             isRunning = False
-
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 isRunning = False
+            elif event.key == pygame.K_RIGHT:
+                current_object_index = (current_object_index + 1) % len(objects)
+                rend.scene.remove(current_object)
+                current_object = objects[current_object_index]
+                rend.scene.append(current_object)
+                rend.target = current_object.position
+                current_object.shader = rend.activeShader
+
+            # Manejo de cambio de shader con las teclas 1-5
             elif event.key == pygame.K_1:
                 print("1")
-                rend.setShaders(vertex_shader, fragment_shader)
+                rend.setShaders(vertex_shader, toon_shader)
+                current_object.shader = rend.activeShader
             elif event.key == pygame.K_2:
                 print("2")
-                rend.setShaders(vertex_shader, resalt_shader)
+                rend.setShaders(vertex_shader, water_shader)
+                current_object.shader = rend.activeShader
             elif event.key == pygame.K_3:
                 print("3")
                 rend.setShaders(vertex_shader, manchas_shader)
+                current_object.shader = rend.activeShader
             elif event.key == pygame.K_4:
                 print("4")
                 rend.setShaders(vertex_shader, stars_shader)
+                current_object.shader = rend.activeShader
             elif event.key == pygame.K_5:
                 print("5")
                 rend.setShaders(vertex_shader, fire_shader)
+                current_object.shader = rend.activeShader
         
         elif event.type == pygame.MOUSEMOTION:
             if event.buttons[0] == 1:  # Botón izquierdo del mouse
@@ -130,37 +145,32 @@ while isRunning:
                 rend.camPosition.z += event.rel[1] * 0.1 
                 rend.camPosition.z += event.rel[0] * 0.1
 
-    
-    # if keys[K_RIGHT]:
-    #     rend.camRotation -= 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
-
     # # Rotar cámara a la izquierda 
     # elif keys[K_LEFT]:
     #     rend.camRotation += 45 * deltaTime  # ajusta la velocidad de rotación según sea necesario
 
-    #Right al objeto [d]
 
     if keys[K_d]:
-        rend.camPosition.x += 5 * deltaTime 
+        rend.camPosition.x += 20* deltaTime 
 
     # #left al objeto [a]
 
     elif keys[K_a]:
-        rend.camPosition.x -= 5 * deltaTime
+        rend.camPosition.x -=  20* deltaTime
 
     # #ZoomIn al objeto [w]
     if keys[K_w]:
-        rend.camPosition.z += 5* deltaTime
+        rend.camPosition.z += 20* deltaTime
     #ZoomOut al objeto [s]
     elif keys[K_s]:
-        rend.camPosition.z -= 5 * deltaTime
+        rend.camPosition.z -= 20* deltaTime
 
     #Movimiento de camara hacia arriba [q]
     if keys[K_q]:
-        rend.camPosition.y += 5 * deltaTime
+        rend.camPosition.y += 20* deltaTime
      #Movimiento de camara hacia abajo [e]
     elif keys[K_e]:
-        rend.camPosition.y -= 5 * deltaTime 
+        rend.camPosition.y -= 20* deltaTime 
 
     if keys[K_UP]:
         if rend.fatness<1.0:

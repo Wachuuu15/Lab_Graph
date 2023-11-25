@@ -101,4 +101,3 @@ class Model(object):
 
         glDrawArrays(GL_TRIANGLES,0,int(len(self.vertBuffer)/8))
         
-        

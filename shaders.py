@@ -51,32 +51,49 @@ void main()
 }
 """
 
-resalt_shader = """
+water_shader = """
 #version 450 core
 
-layout (binding=0) uniform sampler2D tex;
+layout (binding=0) uniform sampler2D tex; // Textura base del agua
+layout (binding=1) uniform sampler2D normalMap; // Mapa normal para el agua
+uniform float time;
 
 in vec2 outTextcoords;
 in vec3 outNormals;
 
 out vec4 fragColor;
 
-void main()
-{
-    // Obtenemos el color base de la textura
-    vec3 baseColor = texture(tex, outTextcoords).xyz;
+float noise(vec2 pos) {
+    return fract(sin(dot(pos, vec2(12.9898,78.233))) * 43758.5453);
+}
 
-    // Simulamos un efecto de fractales
-    float scale = 10.0; // Ajusta la escala de los fractales según sea necesario
-    vec2 fractalCoords = outTextcoords * scale;
-    float fractalIntensity = sin(fractalCoords.x) * cos(fractalCoords.y);
+void main() {
+    // Color base azul para el agua
+    vec3 baseColor = vec3(0.0, 0.5, 0.7); 
 
-    // Aplicamos el efecto de fractales al color base
-    vec3 finalColor = baseColor + vec3(fractalIntensity);
+    // Coordenadas de textura distorsionadas para simular movimiento
+    float waveSpeed = 0.2;
+    vec2 distortedCoords = outTextcoords + vec2(noise(outTextcoords + time * waveSpeed), noise(outTextcoords - time * waveSpeed)) * 0.01;
+    
+    // Simular el movimiento del agua utilizando el mapa normal
+    vec3 normal = texture(normalMap, distortedCoords).xyz * 2.0 - 1.0;
+    vec3 lightDir = normalize(vec3(0.0, 1.0, 1.0)); // Dirección de la luz
+
+    // Iluminación difusa
+    float diff = max(dot(normal, lightDir), 0.0);
+
+    // Iluminación especular
+    float specularStrength = 0.5;
+    vec3 viewDir = normalize(vec3(-outTextcoords, 1.0)); // Dirección de la vista
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * vec3(0.0, 0.5, 0.7); // Color especular azulado
+
+    // Combinación del color de base con la iluminación
+    vec3 finalColor = baseColor * diff + specular;
 
     fragColor = vec4(finalColor, 1.0);
 }
-
 
 """
 
@@ -89,19 +106,16 @@ in vec2 outTextcoords;
 in vec3 outNormals;
 
 out vec4 fragColor;
+uniform float time;
+
 
 void main()
 {
-    // Obtenemos el color base de la textura
     vec3 baseColor = texture(tex, outTextcoords).xyz;
-
-    // Añadimos un patrón de manchas de colores
-    vec2 patternCoords = mod(outTextcoords * 20.0, 1.0); // Ajusta el valor de 20.0 según sea necesario para la frecuencia del patrón
-    vec3 patternColor = vec3(patternCoords, 1.0);
-
-    // Combinamos el color base con el patrón
-    vec3 finalColor = baseColor + 0.2 * patternColor; // Ajusta el valor 0.2 para controlar la intensidad de las manchas
-
+    vec2 movingCoords = outTextcoords + vec2(sin(time), cos(time)) * 0.01; // Movimiento de las manchas
+    vec2 patternCoords = mod(movingCoords * 20.0, 1.0);
+    
+    vec3 finalColor = mix(baseColor, vec3(patternCoords, 1.0), 0.2);
     fragColor = vec4(finalColor, 1.0);
 }
 
@@ -111,6 +125,9 @@ stars_shader = """
 #version 450 core
 
 layout (binding=0) uniform sampler2D tex;
+layout (binding=1) uniform sampler2D normalMap; // Mapa normal
+uniform float time;
+uniform vec3 lightDir; // Dirección de la luz
 
 in vec2 outTextcoords;
 in vec3 outNormals;
@@ -119,18 +136,20 @@ out vec4 fragColor;
 
 void main()
 {
-    // Obtenemos el color base de la textura
     vec3 baseColor = texture(tex, outTextcoords).xyz;
+    vec3 normal = texture(normalMap, outTextcoords).xyz * 2.0 - 1.0; // Normaliza el mapa normal
 
-    // Calculamos las coordenadas radiales
     vec2 radialCoords = outTextcoords - 0.5;
     float distance = length(radialCoords);
 
-    // Creamos un patrón de ondas concéntricas
-    float waveIntensity = 0.5 + 0.5 * sin(distance * 20.0); // Ajusta la frecuencia de las ondas según sea necesario
-
-    // Combinamos el color base con el patrón de ondas
-    vec3 finalColor = baseColor + waveIntensity;
+    // Iluminación difusa
+    float diff = max(dot(normal, lightDir), 0.0);
+    
+    // Intensidad de las estrellas
+    float waveIntensity = 0.5 + 0.5 * sin(distance * 20.0 + time);
+    
+    vec3 starColor = vec3(1.0, 1.0, 1.0);
+    vec3 finalColor = mix(baseColor * diff, starColor, waveIntensity);
 
     fragColor = vec4(finalColor, 1.0);
 }
@@ -151,14 +170,21 @@ out vec4 fragColor;
 
 void main()
 {
-    float intensity = dot(outNormals,-dirLight);
-    if (intensity<0.33)
-        intensity=0.2;
-    else if (intensity<0.66)
-        intensity=0.6;
-    else
-        intensity=1.0;
-    fragColor = texture(tex,outTextcoords)*intensity;
+    float intensity = dot(outNormals, -dirLight);
+    vec4 color = texture(tex, outTextcoords);
+    
+    if (intensity > 0.95) 
+        intensity = 1.0;
+    else if (intensity > 0.5) 
+        intensity = 0.7;
+    else if (intensity > 0.25) 
+        intensity = 0.4;
+    else 
+        intensity = 0.2;
+
+    color.xyz *= intensity;
+
+    fragColor = color;
 }
 
 """
@@ -167,25 +193,35 @@ fire_shader = """
 #version 450 core
 
 layout (binding=0) uniform sampler2D tex;
+uniform float time;
 
 in vec2 outTextcoords;
 in vec3 outNormals;
 
 out vec4 fragColor;
 
-void main()
-{
-    // Obtenemos el color base de la textura
+float noise(vec2 pos) {
+    // Función de ruido simple para simular la turbulencia
+    return fract(sin(dot(pos, vec2(12.9898,78.233))) * 43758.5453);
+}
+
+void main() {
     vec3 baseColor = texture(tex, outTextcoords).xyz;
 
-    // Simulamos un efecto de fuego o calor
-    float fireIntensity = 0.5 + 0.5 * sin(outTextcoords.y * 20.0); // Ajusta la frecuencia del efecto de fuego
+    // Coordenadas con "ruido" para simular el movimiento de las llamas
+    vec2 noiseCoords = outTextcoords + vec2(noise(outTextcoords + time * 0.7), time * 0.4);
+    float fireIntensity = noise(noiseCoords);
 
-    // Aplicamos el efecto de fuego al color base
-    vec3 finalColor = baseColor + vec3(1.0, 0.5, 0.0) * fireIntensity; // Color naranja para el fuego
+    // Color y brillo del fuego
+    vec3 fireColor = vec3(1.0, 0.3, 0.0) + vec3(0.8, 0.2, 0.0) * fireIntensity;
+    fireColor *= 1.5 - length(2.0 * outTextcoords - 1.0); // Disminuye la intensidad hacia los bordes
+
+    // Combinación del color de fuego con el color base
+    vec3 finalColor = mix(baseColor, fireColor, fireIntensity);
 
     fragColor = vec4(finalColor, 1.0);
 }
+
 """
 
 fragment_shader = """
