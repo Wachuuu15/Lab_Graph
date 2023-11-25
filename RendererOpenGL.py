@@ -76,6 +76,14 @@ for obj_info in objects_info:
                 objData.extend(vertex + uv + normals)
 
     model = Model(objData)
+    #Model position
+    model.position.z = -2.4
+    model.position.y = 3
+    model.position.x = -2
+    model.rotation.y = 5
+    model.scale = glm.vec3(1.20, 1.20, 1.20)
+    model.lookAt = glm.vec3(model.position.x + 0.4, model.position.y + 2 , model.position.z - 2.4)
+
 
     # Cargar texturas para el objeto actual
     for i, texture_file in enumerate(textures):
