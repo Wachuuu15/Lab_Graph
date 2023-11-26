@@ -1,8 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\skybox"
+    ""
   ],
-  "SelectedNode": "\\shaders.py",
+  "SelectedNode": "\\RendererOpenGL.py",
   "PreviewInSolutionExplorer": false
 }

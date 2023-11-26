@@ -101,7 +101,8 @@ rend.target = current_object.position
 rend.lightIntensity = 0.2
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
-taylor_song= pygame.mixer.Sound("music/karma.mp3")
+taylor_song= pygame.mixer.music.load("music/LateNightTalking.mp3")
+#taylor_song.set_volume(0.3)
 
 isRunning = True
 
@@ -128,7 +129,8 @@ while isRunning:
                 print("1")
                 rend.setShaders(vertex_shader, toon_shader)
                 current_object.shader = rend.activeShader
-                taylor_song.play()
+                pygame.mixer.music.play()
+
             elif event.key == pygame.K_2:
                 print("2")
                 rend.setShaders(vertex_shader, water_shader)
