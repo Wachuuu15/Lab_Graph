@@ -84,6 +84,7 @@ for obj_info in objects_info:
     model.scale = glm.vec3(1.20, 1.20, 1.20)
     model.lookAt = glm.vec3(model.position.x + 0.4, model.position.y + 2 , model.position.z - 2.4)
 
+    
 
     # Cargar texturas para el objeto actual
     for i, texture_file in enumerate(textures):
@@ -100,6 +101,7 @@ rend.target = current_object.position
 rend.lightIntensity = 0.2
 rend.dirLight = glm.vec3(0.0, 0.0, -1.0)
 
+taylor_song= pygame.mixer.Sound("music/karma.mp3")
 
 isRunning = True
 
@@ -126,6 +128,7 @@ while isRunning:
                 print("1")
                 rend.setShaders(vertex_shader, toon_shader)
                 current_object.shader = rend.activeShader
+                taylor_song.play()
             elif event.key == pygame.K_2:
                 print("2")
                 rend.setShaders(vertex_shader, water_shader)
